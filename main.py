@@ -1,4 +1,6 @@
-import metodos
+import disparo.disparo as disparo
+import tablero.tablero as tablero
+import utils.utils as utils
 import os
 
 ########
@@ -45,15 +47,15 @@ ERROR_NUMERO_ENTERO =  "Introduce números enteros, por favor"
 
 # Generar dos tableros, uno para mostrar al usuario (original) 
 # y otro para guardar los barcos (copia) y comparar con los disparos
-metodos.crear_tablero(array_original, ANCHO, ALTO, CARACTER_VACIO)
-metodos.crear_tablero(array_copia, ANCHO, ALTO, CARACTER_VACIO)
+tablero.crear_tablero(array_original, ANCHO, ALTO, CARACTER_VACIO)
+tablero.crear_tablero(array_copia, ANCHO, ALTO, CARACTER_VACIO)
 
 # Introducir Portaaviones
-metodos.bucle_generar_barcos(contador, 1, fin_de_bucle, MINIMO_RANDOM, TAMANYO_PORTA, ANCHO, ALTO, array_copia, CARACTER_POSICION_BARCO)
+tablero.generar_barcos(contador, 1, fin_de_bucle, MINIMO_RANDOM, TAMANYO_PORTA, ANCHO, ALTO, array_copia, CARACTER_POSICION_BARCO)
 # Introducir Submarinos
-metodos.bucle_generar_barcos(contador, 2, fin_de_bucle, MINIMO_RANDOM, TAMANYO_SUBMA, ANCHO, ALTO, array_copia, CARACTER_POSICION_BARCO)
+tablero.generar_barcos(contador, 2, fin_de_bucle, MINIMO_RANDOM, TAMANYO_SUBMA, ANCHO, ALTO, array_copia, CARACTER_POSICION_BARCO)
 # Introducir Destructores
-metodos.bucle_generar_barcos(contador, 3, fin_de_bucle, MINIMO_RANDOM, TAMANYO_DESTRUC, ANCHO, ALTO, array_copia, CARACTER_POSICION_BARCO)
+tablero.generar_barcos(contador, 3, fin_de_bucle, MINIMO_RANDOM, TAMANYO_DESTRUC, ANCHO, ALTO, array_copia, CARACTER_POSICION_BARCO)
 
 # Bucle que se repite mientras queden disparos y barcos
 while contador < CANTIDAD_DISPAROS and not victoria:
@@ -62,12 +64,12 @@ while contador < CANTIDAD_DISPAROS and not victoria:
         print("")
         posicion_x = input(TEXTO_POSICION_X) # Pedir coordenada x
 
-        if not metodos.es_numero_entero(posicion_x): # Comprobar si es número entero
+        if not utils.es_numero_entero(posicion_x): # Comprobar si es número entero
             print("")
             print("ERROR:", ERROR_NUMERO_ENTERO)
             continue
         else:
-            if not metodos.opcion_valida(posicion_x, ANCHO - 1): # Comprobar si el valor está dentro del límte del tablero
+            if not utils.opcion_valida(posicion_x, ANCHO - 1): # Comprobar si el valor está dentro del límte del tablero
                 print("")
                 print("ERROR:", ERROR_LIMITE_TABLERO) 
                 continue
@@ -75,12 +77,12 @@ while contador < CANTIDAD_DISPAROS and not victoria:
         print("")
         posicion_y = input(TEXTO_POSICION_Y)  # Pedir coordenada y
 
-        if not metodos.es_numero_entero(posicion_y): # Comprobar si es número entero
+        if not utils.es_numero_entero(posicion_y): # Comprobar si es número entero
             print("")
             print("ERROR:", ERROR_NUMERO_ENTERO)
             continue
         else:
-            if not metodos.opcion_valida(posicion_y, ALTO - 1): # Comprobar si el valor está dentro del límte del tablero
+            if not utils.opcion_valida(posicion_y, ALTO - 1): # Comprobar si el valor está dentro del límte del tablero
                 print("")
                 print("ERROR:", ERROR_LIMITE_TABLERO)
                 continue
@@ -89,25 +91,25 @@ while contador < CANTIDAD_DISPAROS and not victoria:
 
     os.system('cls') # Borrar consola
 
-    if metodos.disparo_repetido(array_original, int(posicion_x), int(posicion_y), CARACTER_TOCADO, CARACTER_AGUA): # Comprobar si ya se había disparado en esta casilla
+    if disparo.disparo_repetido(array_original, int(posicion_x), int(posicion_y), CARACTER_TOCADO, CARACTER_AGUA): # Comprobar si ya se había disparado en esta casilla
         print("")
         print(TEXTO_REPETIDO)
         print("")
         print(TEXTO_BALAS_RESTANTES, CANTIDAD_DISPAROS - contador) # Mostrar mensaje con las balas restantes
         print("")
         coordenadas_validas = False
-        metodos.ver_tablero(array_original, ALTO)
+        tablero.ver_tablero(array_original, ALTO)
         print("")
         continue
 
-    if metodos.disparo_acertado(array_original, array_copia, int(posicion_x), int(posicion_y)): # Comprobar si se ha acertado en un barco
-        metodos.marcar_disparo(array_original, array_copia, int(posicion_x), int(posicion_y), CARACTER_TOCADO)
+    if disparo.disparo_acertado(array_original, array_copia, int(posicion_x), int(posicion_y)): # Comprobar si se ha acertado en un barco
+        disparo.marcar_disparo(array_original, array_copia, int(posicion_x), int(posicion_y), CARACTER_TOCADO)
         print("")
         print(TEXTO_TOCADO)
-        if not metodos.quedan_barcos(array_copia, ANCHO, ALTO): # Comprobar si quedan barcos
+        if not tablero.quedan_barcos(array_copia, ANCHO, ALTO): # Comprobar si quedan barcos
             victoria = True
     else:
-        metodos.marcar_disparo(array_original, array_copia, int(posicion_x), int(posicion_y), CARACTER_AGUA)
+        disparo.marcar_disparo(array_original, array_copia, int(posicion_x), int(posicion_y), CARACTER_AGUA)
         print(TEXTO_AGUA)
 
     if contador < CANTIDAD_DISPAROS:
@@ -119,10 +121,10 @@ while contador < CANTIDAD_DISPAROS and not victoria:
     # print("")
     # print("BARCOS")
     # print("")
-    # metodos.ver_tablero(array_copia, ALTO)
+    # tablero.ver_tablero(array_copia, ALTO)
 
     print("")
-    metodos.ver_tablero(array_original, ALTO) # Mostrar tablero con los disparos efectuados
+    tablero.ver_tablero(array_original, ALTO) # Mostrar tablero con los disparos efectuados
     print("")
     print(TEXTO_BALAS_RESTANTES, CANTIDAD_DISPAROS - contador) # Mostrar mensaje con las balas restantes
     
