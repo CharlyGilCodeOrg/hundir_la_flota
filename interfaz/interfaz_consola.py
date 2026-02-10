@@ -30,17 +30,22 @@ class InterfazConsola:
         :return: Coordenada válida.
         :rtype: int
         """
-        while True:
+        valido = False
+        while not valido:
             valor = input(self.textos[f"TEXTO_POSICION_{eje.upper()}"])
+            print("")
 
             if not self.validador.es_numero_entero(valor):
                 print(self.textos["ERROR_NUMERO_ENTERO"])
+                print("")
                 continue
 
             if not self.validador.opcion_valida(valor, limite):
                 print(self.textos["ERROR_LIMITE_TABLERO"])
+                print("")
                 continue
-
+            
+            valido = True
             return int(valor)
 
 
