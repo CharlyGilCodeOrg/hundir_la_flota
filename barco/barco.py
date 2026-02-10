@@ -5,16 +5,19 @@ class Barco:
     Representa un barco dentro del juego.
     """
 
-    def __init__(self, tamanyo, caracter):
+    def __init__(self, tamanyo, cantidad, caracter):
         """
         Inicializa un barco con un tamaño y una orientación aleatoria.
 
         :param tamanyo: Tamaño del barco.
         :type tamanyo: int
+        :param tamanyo: Cantidad de barcos que se crearán.
+        :type tamanyo: int
         :param caracter: Carácter que representa al barco.
         :type caracter: str
         """
         self.tamanyo = tamanyo
+        self.cantidad = cantidad
         self.caracter = caracter
         self.horizontal = self.es_horizontal()
 

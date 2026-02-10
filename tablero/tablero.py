@@ -92,7 +92,7 @@ class Tablero:
         :type x: int
         :param y: Coordenada inicial en el eje Y.
         :type y: int
-        :param array_caracteres: Lista de caracteres de barco (portaaviones, destructor, submarino).
+        :param array_caracteres: Lista de caracteres identificadores de los barcos.
         :type array_caracteres: list
         :return: True si hay un barco en alguna posición, False en caso contrario.
         :rtype: bool
@@ -117,7 +117,7 @@ class Tablero:
 
         :param array: Tablero donde se realiza la comprobación.
         :type array: list
-        :param array_caracteres: Lista de caracteres de barco (portaaviones, destructor, submarino).
+        :param array_caracteres: Lista de caracteres identificadores de los barcos.
         :type array_caracteres: list
         :return: True si quedan barcos, False si no.
         :rtype: bool
@@ -129,22 +129,21 @@ class Tablero:
         return False
 
 
-    def generar_barcos(self, repeticiones, minimo, array, barco, array_caracteres):
+    def generar_barcos(self, minimo, array, barco, array_caracteres):
         """
         Genera y coloca un barcos aleatoriamente en el tablero.
 
-        El proceso se repite hasta introducir el número de barcos indicado,
+        El proceso se repite hasta introducir el número de barcos 
+        indicado en el atributo cantidad del objeto barco,
         comprobando que no se solapen entre sí.
 
-        :param repeticiones: Número total de barcos a introducir en el tablero.
-        :type repeticiones: int
         :param minimo: Valor mínimo para las posiciones aleatorias.
         :type minimo: int
         :param array: Tablero donde se colocan los barcos.
         :type array: list
         :param barco: Barco que se va a colocar en el tablero.
         :type barco: Barco
-        :param array_caracteres: Lista de caracteres de barco (portaaviones, destructor, submarino).
+        :param array_caracteres: Lista de caracteres identificadores de los barcos.
         :type array_caracteres: list
         :return: None
         """
@@ -152,7 +151,7 @@ class Tablero:
         intentos_maximos = 1000
         intentos = 0
 
-        while contador < repeticiones and intentos < intentos_maximos:
+        while contador < barco.cantidad and intentos < intentos_maximos:
             intentos += 1
             barco.horizontal = barco.es_horizontal()
 
