@@ -83,6 +83,7 @@ class InterfazConsola:
         :param restantes: Número de disparos restantes.
         :type restantes: int
         """
+        print("")
         print(self.textos["TEXTO_BALAS_RESTANTES"], restantes)
         print("")
 
