@@ -19,6 +19,7 @@ class TextosJuego:
         - TEXTO_DERROTA
         - ERROR_LIMITE_TABLERO
         - ERROR_NUMERO_ENTERO
+        - SALTO_DE_LINEA
         """
         self.textos = textos
 
@@ -31,5 +32,4 @@ class TextosJuego:
         :return: Texto específico.
         :rtype: str
         """
-        textos = self.textos
-        return textos[clave]
+        return self.textos[clave]

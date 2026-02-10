@@ -12,5 +12,7 @@ mensajes = {
     "TEXTO_DERROTA" : "LÁSTIMA, TE HAS QUEDADO SIN BALAS. AFINA TU PUNTERÍA Y VUELVE A INTENTARLO.",
     # Textos de error 
     "ERROR_LIMITE_TABLERO" : "La posición del disparo excede los límites del tablero",
-    "ERROR_NUMERO_ENTERO" :  "Introduce números enteros, por favor"
+    "ERROR_NUMERO_ENTERO" :  "Introduce números enteros, por favor",
+    # Salto de líena
+    "SALTO_DE_LINEA" : ""
 }

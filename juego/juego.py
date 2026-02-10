@@ -79,5 +79,27 @@ class Juego:
         for barco in barcos:
             tablero.generar_barcos(barco.cantidad, minimo, array_barcos, barco, array_caracteres)
 
+
+    def dentro_del_limite(self, eje, valor, tablero):
+        """
+        Controla que la posición introducida por el usuario
+        no se salga de los límites del tablero
+        
+        :param eje: X o Y
+        :tpe eje: str
+        :param valor: Valor introducido por el usuario
+        :type valor: str
+        :param tablero: Tablero objeto.
+        :type tablero: Tablero
+        :return: True si está dentro del límite y False si no
+        :rtype: bool
+        """
     
-    
+        if eje.lower() == "x":
+            if not self.utils.opcion_valida(valor, tablero.ancho):
+                return False
+        elif eje.lower() == "y":
+            if not self.utils.opcion_valida(valor, tablero.alto):
+                return False
+
+        return True
