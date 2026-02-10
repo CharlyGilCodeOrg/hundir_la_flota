@@ -33,17 +33,13 @@ class Juego:
         self.caracter_vacio = caracter_vacio
         self.caracter_tocado = caracter_tocado
         self.caracter_agua = caracter_agua
-        array_caracteres = []
-
-        for barco in self.tablero_barco.barcos:
-            array_caracteres.append(barco.caracter)
 
         # Inicialización
         for barco in self.tablero_barco.barcos:
-            self.tablero_barco.generar_barcos(barco, array_caracteres)
+            self.tablero_barco.generar_barcos(barco)
 
 
-    def disparar(self, x, y, array_caracteres):
+    def disparar(self, x, y):
         """
         Realiza un disparo sobre el tablero.
 
@@ -51,8 +47,6 @@ class Juego:
         :type x: int
         :param y: Coordenada Y.
         :type y: int
-        :param array_caracteres: Lista de caracteres de barcos.
-        :type array_caracteres: list
         :return: Resultado del disparo.
         :rtype: str
         """
@@ -63,7 +57,7 @@ class Juego:
 
         self.disparos_realizados += 1
 
-        if self.tablero_barco.comprobar_acierto(x, y, array_caracteres):
+        if self.tablero_barco.comprobar_acierto(x, y):
             self.tablero_barco.marcar_disparo(
                 x,
                 y,
@@ -94,13 +88,11 @@ class Juego:
         return self.disparos_realizados < self.disparos_maximos
 
 
-    def hay_victoria(self, array_caracteres):
+    def hay_victoria(self):
         """
         Comprueba si quedan barcos en el tablero interno.
 
-        :param array_caracteres: Lista de caracteres de barcos.
-        :type array_caracteres: list
         :return: True si no quedan barcos.
         :rtype: bool
         """
-        return not self.tablero_barco.quedan_barcos(array_caracteres)
+        return not self.tablero_barco.quedan_barcos()

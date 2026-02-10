@@ -29,8 +29,6 @@ def main():
     submarinos = Barco(2, 3, "S")
 
     barcos = [portaaviones, destructores, submarinos]
-    array_caracteres = [b.caracter for b in barcos]
-
 
     tablero_usuario = Tablero(10, 10, barcos, CARACTER_VACIO)
     tablero_interno = Tablero(10, 10, barcos, CARACTER_VACIO)
@@ -43,19 +41,18 @@ def main():
         CARACTER_AGUA
     )
 
-    while juego.quedan_disparos() and not juego.hay_victoria(array_caracteres):
+    while juego.quedan_disparos() and not juego.hay_victoria():
         x = interfaz.pedir_coordenada("x", tablero_interno.ancho - 1)
         y = interfaz.pedir_coordenada("y", tablero_interno.alto - 1)
 
-        resultado = juego.disparar(x, y, array_caracteres)
+        resultado = juego.disparar(x, y)
         interfaz.borrar_resultado()
         interfaz.mostrar_resultado(resultado)
         interfaz.mostrar_tablero(tablero_usuario)
         interfaz.mostrar_balas(DISPAROS_MAXIMOS - juego.disparos_realizados)
 
-    interfaz.mostrar_mensaje_final(juego.hay_victoria(array_caracteres))
+    interfaz.mostrar_mensaje_final(juego.hay_victoria())
 
 
 if __name__ == "__main__":
     main()
-

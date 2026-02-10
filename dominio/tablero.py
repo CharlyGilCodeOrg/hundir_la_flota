@@ -19,6 +19,7 @@ class Tablero:
         self.alto = alto
         self.barcos = barcos
 
+        self._caracteres_barcos = [barco.caracter for barco in barcos]
         self._casillas = [
             [caracter_vacio for _ in range(ancho)]
             for _ in range(alto)
@@ -42,20 +43,18 @@ class Tablero:
             print(fila_str)
 
 
-    def quedan_barcos(self, array_caracteres):
+    def quedan_barcos(self):
         """
         Comprueba si quedan barcos sin hundir en el tablero.
 
         :param array: Tablero donde se realiza la comprobación.
         :type array: list
-        :param array_caracteres: Lista de caracteres identificadores de los barcos.
-        :type array_caracteres: list
         :return: True si quedan barcos, False si no.
         :rtype: bool
         """
         for i in range(self.alto):
             for j in range(self.ancho):
-                if self._casillas[i][j] in array_caracteres:
+                if self._casillas[i][j] in self._caracteres_barcos:
                     return True
         return False
     
@@ -74,7 +73,7 @@ class Tablero:
         self._casillas[y][x] = caracter
     
 
-    def generar_barcos(self, barco, array_caracteres):
+    def generar_barcos(self, barco):
         """
         Genera y coloca un barcos aleatoriamente en el tablero.
 
@@ -84,8 +83,6 @@ class Tablero:
 
         :param barco: Barco que se va a colocar en el tablero.
         :type barco: Barco
-        :param array_caracteres: Lista de caracteres identificadores de los barcos.
-        :type array_caracteres: list
         """
         contador = 0
         intentos_maximos = 1000
@@ -101,7 +98,7 @@ class Tablero:
             posicion_x = random.randint(0, max_x)
             posicion_y = random.randint(0, max_y)
 
-            if not self._ya_hay_barco_en_posicion(barco, posicion_x, posicion_y, array_caracteres):
+            if not self._ya_hay_barco_en_posicion(barco, posicion_x, posicion_y):
                 self._rellenar_tablero(barco, posicion_x, posicion_y)
                 contador = contador + 1
         
@@ -127,7 +124,7 @@ class Tablero:
         return self._casillas[y][x] == caracter_tocado or self._casillas[y][x] == caracter_agua
     
 
-    def comprobar_acierto(self, x, y, array_caracteres):
+    def comprobar_acierto(self, x, y):
         """
         Determina si el disparo impacta en un barco.
 
@@ -135,13 +132,11 @@ class Tablero:
         :type x: int
         :param y: Coordenada y que introduce el usuario por teclado
         :type y: int
-        :param array_caracteres: Lista de caracteres de barco (portaaviones, destructor, submarino).
-        :type array_caracteres: list
         :return: True si el disparo ha sido acertado, False en caso contrario.
         :rtype: bool
         """
 
-        return self._casillas[y][x] in array_caracteres
+        return self._casillas[y][x] in self._caracteres_barcos
 
 
     def _rellenar_tablero(self, barco, x, y):
@@ -168,7 +163,7 @@ class Tablero:
                 y = y + 1
 
 
-    def _ya_hay_barco_en_posicion(self, barco, x, y, array_caracteres):
+    def _ya_hay_barco_en_posicion(self, barco, x, y):
         """
         Comprueba si ya existe un barco en las posiciones donde se pretende colocar otro.
 
@@ -178,19 +173,17 @@ class Tablero:
         :type x: int
         :param y: Coordenada inicial en el eje Y.
         :type y: int
-        :param array_caracteres: Lista de caracteres identificadores de los barcos.
-        :type array_caracteres: list
         :return: True si hay un barco en alguna posición, False en caso contrario.
         :rtype: bool
         """
         if barco.horizontal:
             for i in range(barco.tamanyo):
-                if self._casillas[y][x] in array_caracteres:
+                if self._casillas[y][x] in self._caracteres_barcos:
                     return True
                 x = x + 1
         else:
             for i in range(barco.tamanyo):
-                if self._casillas[y][x] in array_caracteres:
+                if self._casillas[y][x] in self._caracteres_barcos:
                     return True
                 y = y + 1
 
