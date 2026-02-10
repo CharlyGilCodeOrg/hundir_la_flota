@@ -17,6 +17,10 @@ TEXTOS = {
     # Final
     "TEXTO_VICTORIA": "TE HAS CARGADO TODOS LOS BARCOS, ENHORABUENA.",
     "TEXTO_DERROTA": "LÁSTIMA, TE HAS QUEDADO SIN BALAS. AFINA TU PUNTERÍA Y VUELVE A INTENTARLO.",
+    
+    # Terminar programa
+    "TEXTO_FIN_PROGRAMA" : "Introduzca el valor 99 para terminar el programa",
+    "FIN_DE_PROGRAMA" : "FIN DE PROGRAMA",
 
     # Errores
     "ERROR_LIMITE_TABLERO": "La posición del disparo excede los límites del tablero",

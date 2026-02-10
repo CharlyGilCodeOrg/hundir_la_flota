@@ -42,8 +42,15 @@ def main():
     )
 
     while juego.quedan_disparos() and not juego.hay_victoria():
+        interfaz.opcion_fin_programa()
         x = interfaz.pedir_coordenada("x", tablero_interno.ancho - 1)
+        if x is None:
+            interfaz.fin_programa()
+            return
         y = interfaz.pedir_coordenada("y", tablero_interno.alto - 1)
+        if y is None:
+            interfaz.fin_programa()
+            return
 
         resultado = juego.disparar(x, y)
         interfaz.borrar_consola()

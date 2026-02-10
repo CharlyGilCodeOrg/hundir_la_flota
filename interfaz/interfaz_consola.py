@@ -22,6 +22,7 @@ class InterfazConsola:
     def pedir_coordenada(self, eje, limite):
         """
         Solicita una coordenada válida al usuario.
+        99 es el valor establecido para terminar el programa.
 
         :param eje: Eje ('x' o 'y').
         :type eje: str
@@ -40,6 +41,9 @@ class InterfazConsola:
                 print("")
                 continue
 
+            if int(valor) == 99:
+                return None
+
             if not self.validador.opcion_valida(valor, limite):
                 print(self.textos["ERROR_LIMITE_TABLERO"])
                 print("")
@@ -47,6 +51,23 @@ class InterfazConsola:
             
             valido = True
             return int(valor)
+
+
+    def opcion_fin_programa(self):
+        """
+        Muestra el texto con la opción para terminar el programa.
+
+        """
+        print(self.textos["TEXTO_FIN_PROGRAMA"])
+        print("")
+
+    def fin_programa(self):
+        """
+        Muestra el texto de fin de programa.
+
+        """
+        print(self.textos["FIN_DE_PROGRAMA"])
+        print("")
 
 
     def mostrar_resultado(self, resultado):
