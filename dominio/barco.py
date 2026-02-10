@@ -11,8 +11,8 @@ class Barco:
 
         :param tamanyo: Tamaño del barco.
         :type tamanyo: int
-        :param tamanyo: Cantidad de barcos que se crearán.
-        :type tamanyo: int
+        :param cantidad: Cantidad de barcos que se crearán.
+        :type cantidad: int
         :param caracter: Carácter que representa al barco.
         :type caracter: str
         """
