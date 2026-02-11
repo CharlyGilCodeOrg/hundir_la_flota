@@ -7,20 +7,12 @@ la ejecución del juego.
 from dominio.tablero import Tablero
 from dominio.juego import Juego
 from dominio.barco import Barco
-from interfaz.interfaz_consola import InterfazConsola
-from interfaz.menu import Menu
+from vista.consola.interfaz_consola import InterfazConsola
+from vista.consola.menu_consola import Menu
 from utils.utils import Util
 from utils.excepciones import SalirDelPrograma, VolverAlMenu
 from config.mensajes import TEXTOS
-from config.constantes import (
-    ANCHO_TABLERO,
-    ALTO_TABLERO,
-    CARACTER_VACIO,
-    CARACTER_TOCADO,
-    CARACTER_AGUA,
-    DISPAROS_MAXIMOS,
-    CONFIG_BARCOS,
-)
+import config.constantes as constante
 
 
 class App:
@@ -42,52 +34,58 @@ class App:
         self.interfaz = InterfazConsola(TEXTOS, validador)
         self.menu = Menu(self.interfaz)
 
+
     def ejecutar(self):
         """
         Inicia la ejecución de la aplicación.
         """
         try:
             while True:
-                self.menu.ejecutar()
-                juego = self._crear_juego()
+                dificultad = self.menu.ejecutar_menu_principal()
+                juego = self._crear_juego(dificultad)
                 self._ejecutar_partida(juego)
         except SalirDelPrograma:
             self.interfaz.fin_programa()
 
-    def _crear_juego(self):
+
+    def _crear_juego(self, dificultad):
         """
         Crea e inicializa una nueva partida del juego.
 
+        :param dificultad: Objeto con parámetros de dificultad
         :return: Objeto Juego inicializado.
         :rtype: Juego
         """
+        config = constante.DIFICULTAD[dificultad]
+
         barcos = [
-        Barco(longitud, cantidad, identificador)
-        for longitud, cantidad, identificador in CONFIG_BARCOS
+            Barco(longitud, cantidad, identificador)
+            for longitud, cantidad, identificador in config["barcos"]
         ]
 
         tablero_usuario = Tablero(
-            ANCHO_TABLERO,
-            ALTO_TABLERO,
+            config["ancho"],
+            config["alto"],
             barcos,
-            CARACTER_VACIO
+            constante.CARACTER_VACIO
         )
 
         tablero_interno = Tablero(
-            ANCHO_TABLERO,
-            ALTO_TABLERO,
+            config["ancho"],
+            config["alto"],
             barcos,
-            CARACTER_VACIO
+            constante.CARACTER_VACIO
         )
 
         return Juego(
             tablero_usuario,
             tablero_interno,
-            DISPAROS_MAXIMOS,
-            CARACTER_VACIO,
-            CARACTER_TOCADO,
-            CARACTER_AGUA
+            config["disparos"],
+            constante.CARACTER_VACIO,
+            constante.CARACTER_TOCADO,
+            constante.CARACTER_AGUA
         )
+
 
     def _ejecutar_partida(self, juego):
         """

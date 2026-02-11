@@ -19,7 +19,7 @@ TEXTOS = {
     "TEXTO_DERROTA": "LÁSTIMA, TE HAS QUEDADO SIN BALAS. AFINA TU PUNTERÍA Y VUELVE A INTENTARLO.",
     
     # Terminar programa
-    "TEXTO_FIN_JUEGO" : "Introduzca 'Salir' para volver al menú.",
+    "TEXTO_FIN_JUEGO" : "Escriba 'Salir' para volver al menú.",
     "FIN_DE_PROGRAMA" : "FIN DE PROGRAMA",
 
     # Errores

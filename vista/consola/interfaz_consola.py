@@ -48,9 +48,11 @@ class InterfazConsola:
         :type limite: int
         :return: Coordenada válida.
         :rtype: int
+        :raises VolverAlMenu: Si el usuario selecciona la opción de salir.
         """
         valido = False
         while not valido:
+            print("")
             valor = input(self.textos[f"TEXTO_POSICION_{eje.upper()}"])
             print("")
 
@@ -74,7 +76,6 @@ class InterfazConsola:
     def opcion_volver_menu(self):
         """
         Muestra el texto con la opción para volver al menú.
-
         """
         print(self.textos["TEXTO_FIN_JUEGO"])
         print("")
@@ -83,7 +84,6 @@ class InterfazConsola:
     def fin_programa(self):
         """
         Muestra el texto de fin de programa.
-
         """
         print("")
         print(self.textos["FIN_DE_PROGRAMA"])
@@ -151,7 +151,14 @@ class InterfazConsola:
 
     def borrar_consola(self):
         """
-        Borra lo escrito en la consola
-        
+        Borra lo escrito en la consola.
         """
         os.system('cls')
+
+    
+    def mostrar_instrucciones(self):
+        """
+        Muestra las instrucciones del juego.
+        """
+        self.borrar_consola()
+        print("Instrucciones")

@@ -1,0 +1,4 @@
+Nivel	    Tablero	    Segmentos	Disparos
+Fácil	    8x8	        15	        60
+Medio	    10x10	    17	        60
+Difícil	    10x10	    17	        45

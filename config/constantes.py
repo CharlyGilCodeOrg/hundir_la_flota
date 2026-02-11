@@ -1,18 +1,46 @@
-# Tablero
-ANCHO_TABLERO = 10
-ALTO_TABLERO = 10
+DIFICULTAD = {
+    
+    # Fácil
+    1: {
+        "ancho": 8,
+        "alto": 8,
+        "disparos": 60,
+        "barcos": [
+            (5, 1, "P"),
+            (4, 1, "A"),
+            (3, 1, "D"),
+            (2, 1, "L"),
+        ]
+    },
 
-# Caracteres
+    # Media (clásico)
+    2: {
+        "ancho": 10,
+        "alto": 10,
+        "disparos": 60,
+        "barcos": [
+            (5, 1, "P"),
+            (4, 1, "A"),
+            (3, 2, "D"),
+            (2, 1, "L"),
+        ]
+    },
+
+    # Difícil
+    3: {
+        "ancho": 10,
+        "alto": 10,
+        "disparos": 45,
+        "barcos": [
+            (5, 1, "P"),
+            (4, 1, "A"),
+            (3, 2, "D"),
+            (2, 1, "L"),
+        ]
+    }
+}
+
+# Caracteres comunes
 CARACTER_VACIO = "~"
 CARACTER_TOCADO = "X"
 CARACTER_AGUA = "O"
-
-# Disparos
-DISPAROS_MAXIMOS = 50
-
-# Barcos
-CONFIG_BARCOS = [
-    (4, 1, "P"),  # Portaaviones
-    (3, 2, "D"),  # Destructores
-    (2, 3, "S"),  # Submarinos
-]
