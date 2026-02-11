@@ -96,3 +96,13 @@ class Juego:
         :rtype: bool
         """
         return not self.tablero_barco.quedan_barcos()
+
+
+    def disparos_restantes(self):
+        """
+        Calcula las balas restantes
+
+        :return: Balas restantes.
+        :rtype: int
+        """
+        return self.disparos_maximos - self.disparos_realizados

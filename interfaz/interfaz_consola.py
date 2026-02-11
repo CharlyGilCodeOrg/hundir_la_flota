@@ -1,7 +1,7 @@
 """
 Interfaz de consola del juego Hundir la Flota.
 """
-from utils.excepciones import SalirDelJuego
+from utils.excepciones import VolverAlMenu
 import os
 
 class InterfazConsola:
@@ -55,7 +55,7 @@ class InterfazConsola:
             print("")
 
             if valor.lower() == "salir":
-                raise SalirDelJuego()
+                raise VolverAlMenu()
 
             if not self.validador.es_numero_entero(valor):
                 print(self.textos["ERROR_NUMERO_ENTERO"])
@@ -71,19 +71,21 @@ class InterfazConsola:
             return int(valor)
 
 
-    def opcion_fin_programa(self):
+    def opcion_volver_menu(self):
         """
-        Muestra el texto con la opción para terminar el programa.
+        Muestra el texto con la opción para volver al menú.
 
         """
-        print(self.textos["TEXTO_FIN_PROGRAMA"])
+        print(self.textos["TEXTO_FIN_JUEGO"])
         print("")
+
 
     def fin_programa(self):
         """
         Muestra el texto de fin de programa.
 
         """
+        print("")
         print(self.textos["FIN_DE_PROGRAMA"])
         print("")
 
