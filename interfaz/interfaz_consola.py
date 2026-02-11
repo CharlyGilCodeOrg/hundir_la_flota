@@ -29,6 +29,8 @@ class InterfazConsola:
         :type ancho: int
         :param alto: Alto del tablero.
         :type alto: int
+        :return: El valor para X e Y introducido por el usuario
+        :rtype: str
         """
         x = self._pedir_coordenada("x", ancho - 1)
         y = self._pedir_coordenada("y", alto - 1)
