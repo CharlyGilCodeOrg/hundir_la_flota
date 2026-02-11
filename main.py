@@ -51,6 +51,7 @@ def main():
         if y is None:
             interfaz.fin_programa()
             return
+        #### Comentario nuevo
 
         resultado = juego.disparar(x, y)
         interfaz.borrar_consola()
