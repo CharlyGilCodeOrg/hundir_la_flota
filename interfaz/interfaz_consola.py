@@ -1,6 +1,7 @@
 """
 Interfaz de consola del juego Hundir la Flota.
 """
+from utils.excepciones import SalirDelJuego
 import os
 
 class InterfazConsola:
@@ -17,9 +18,24 @@ class InterfazConsola:
         """
         self.textos = textos
         self.validador = validador
+    
+
+    def pedir_disparo(self, ancho, alto):
+        """
+        Solicita al usuario las coordenadas del disparo.
+        Permite escribir 'salir' para terminar el juego.
+
+        :param ancho: Ancho del tablero.
+        :type ancho: int
+        :param alto: Alto del tablero.
+        :type alto: int
+        """
+        x = self._pedir_coordenada("x", ancho - 1)
+        y = self._pedir_coordenada("y", alto - 1)
+        return x, y
 
 
-    def pedir_coordenada(self, eje, limite):
+    def _pedir_coordenada(self, eje, limite):
         """
         Solicita una coordenada válida al usuario.
         99 es el valor establecido para terminar el programa.
@@ -36,13 +52,13 @@ class InterfazConsola:
             valor = input(self.textos[f"TEXTO_POSICION_{eje.upper()}"])
             print("")
 
+            if valor.lower() == "salir":
+                raise SalirDelJuego()
+
             if not self.validador.es_numero_entero(valor):
                 print(self.textos["ERROR_NUMERO_ENTERO"])
                 print("")
                 continue
-
-            if int(valor) == 99:
-                return None
 
             if not self.validador.opcion_valida(valor, limite):
                 print(self.textos["ERROR_LIMITE_TABLERO"])

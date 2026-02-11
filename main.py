@@ -7,6 +7,7 @@ from dominio.juego import Juego
 from dominio.barco import Barco
 from interfaz.interfaz_consola import InterfazConsola
 from utils.utils import Util
+from utils.excepciones import SalirDelJuego
 from config.textos import TEXTOS
 
 
@@ -41,23 +42,25 @@ def main():
         CARACTER_AGUA
     )
 
-    while juego.quedan_disparos() and not juego.hay_victoria():
-        interfaz.opcion_fin_programa()
-        x = interfaz.pedir_coordenada("x", tablero_interno.ancho - 1)
-        if x is None:
-            interfaz.fin_programa()
-            return
-        y = interfaz.pedir_coordenada("y", tablero_interno.alto - 1)
-        if y is None:
-            interfaz.fin_programa()
-            return
-        #### Comentario nuevo
+    try:
+        while juego.quedan_disparos() and not juego.hay_victoria():
+            
+            interfaz.opcion_fin_programa()
+            x, y = interfaz.pedir_disparo(
+                tablero_interno.ancho,
+                tablero_interno.alto
+            )
 
-        resultado = juego.disparar(x, y)
-        interfaz.borrar_consola()
-        interfaz.mostrar_resultado(resultado)
-        interfaz.mostrar_tablero(tablero_usuario)
-        interfaz.mostrar_balas(DISPAROS_MAXIMOS - juego.disparos_realizados)
+            resultado = juego.disparar(x, y)
+
+            interfaz.borrar_consola()
+            interfaz.mostrar_resultado(resultado)
+            interfaz.mostrar_tablero(tablero_usuario)
+            interfaz.mostrar_balas(DISPAROS_MAXIMOS - juego.disparos_realizados)
+
+    except SalirDelJuego:
+        interfaz.fin_programa()
+        return
 
     interfaz.mostrar_mensaje_final(juego.hay_victoria())
 
