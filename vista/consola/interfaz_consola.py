@@ -3,7 +3,6 @@ Interfaz de consola del juego Hundir la Flota.
 """
 from utils.excepciones import VolverAlMenu
 import os
-import sys
 
 class InterfazConsola:
     """

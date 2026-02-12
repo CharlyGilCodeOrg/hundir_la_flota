@@ -11,7 +11,7 @@ from vista.consola.interfaz_consola import InterfazConsola
 from vista.consola.menu_consola import Menu
 from utils.utils import Util
 from utils.excepciones import SalirDelPrograma, VolverAlMenu
-from config.mensajes import TEXTOS
+from config.mensajes import TEXTOS, INSTRUCCIONES
 import config.constantes as constante
 
 
@@ -32,7 +32,7 @@ class App:
         """
         validador = Util()
         self.interfaz = InterfazConsola(TEXTOS, validador)
-        self.menu = Menu(self.interfaz, constante.INSTRUCCIONES)
+        self.menu = Menu(self.interfaz, INSTRUCCIONES)
 
 
     def ejecutar(self):

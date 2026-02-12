@@ -27,3 +27,37 @@ TEXTOS = {
     "ERROR_NUMERO_ENTERO": "ERROR: Introduce números enteros, por favor",
     "ERROR_MENU" : "ERROR: Opción inválida",
 }
+
+# Instrucciones
+INSTRUCCIONES = """
+FÁCIL
+-------
+- Tablero 8x8.
+- 60 disparos.
+- 1 portaaviones de tamaño 5.
+- 1 acorazado de tamaño 4
+- 1 destructor de tamaño 3
+- 1 lancha de tamaño 2
+
+MEDIA
+------
+- Tablero 10x10.
+- 50 disparos.
+- 1 portaaviones de tamaño 5.
+- 1 acorazado de tamaño 4
+- 2 destructores de tamaño 3
+- 1 lancha de tamaño 2
+
+DIFÍCIL
+--------
+- Tablero 10x10.
+- 40 disparos.
+- 1 portaaviones de tamaño 5.
+- 1 acorazado de tamaño 4
+- 2 destructores de tamaño 3
+- 1 lancha de tamaño 2
+
+------------------------------------------------------------
+Pulsa ENTER para volver al menú...
+============================================================
+"""
