@@ -1,4 +1,4 @@
-from utils.excepciones import SalirDelPrograma
+from utils.excepciones import SalirDelPrograma, VolverAlMenu
 
 class Menu:
 
@@ -59,6 +59,8 @@ class Menu:
                     return 2
                 case "3":
                     return 3
+                case "4":
+                    raise VolverAlMenu()
                 case _:
                     self._interfaz.borrar_consola()
                     print(self._interfaz.textos["ERROR_MENU"])
@@ -94,5 +96,6 @@ class Menu:
         print("1. Fácil")
         print("2. Media")
         print("3. Difícil")
+        print("4. Salir")
         print("")
         return input("Introduzca el número correspondiente a la opción deseada: ")

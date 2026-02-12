@@ -44,6 +44,8 @@ class App:
                 dificultad = self.menu.ejecutar_menu_principal()
                 juego = self._crear_juego(dificultad)
                 self._ejecutar_partida(juego)
+        except VolverAlMenu:
+            self.ejecutar()
         except SalirDelPrograma:
             self.interfaz.fin_programa()
 
