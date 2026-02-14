@@ -69,9 +69,11 @@ class Juego:
                 self.caracter_tocado
             )
 
-
-
-            return "TOCADO"
+            if self.barco_hundido(x, y):
+                return "TOCADO Y HUNDIDO"
+            else:
+                return "TOCADO"
+            
         else:
             self.tablero_usuario.marcar_disparo(
                 x,
