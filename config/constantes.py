@@ -2,8 +2,8 @@ DIFICULTAD = {
     
     # Fácil
     1: {
-        "ancho": 2,
-        "alto": 2,
+        "ancho": 8,
+        "alto": 8,
         "disparos": 60,
         "barcos": [
             (5, 1, "P"),
