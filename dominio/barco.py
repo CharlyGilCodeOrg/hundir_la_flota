@@ -8,6 +8,8 @@ class Barco:
     def __init__(self, tamanyo, cantidad, caracter):
         """
         Inicializa un barco con un tamaño y una orientación aleatoria.
+        La vida restante es igual al tamaño y se va reduciendo en 1
+        con cada disparo recibido.
 
         :param tamanyo: Tamaño del barco.
         :type tamanyo: int
@@ -19,6 +21,7 @@ class Barco:
         self.tamanyo = tamanyo
         self.cantidad = cantidad
         self.caracter = caracter
+        self.vida_restante = tamanyo
         self.horizontal = self.es_horizontal()
 
 
@@ -42,3 +45,13 @@ class Barco:
         :rtype: int
         """
         return alto_o_ancho - self.tamanyo
+    
+
+    def queda_vida_restante(self):
+        """
+        Comprueba la vida restante del barco.
+        
+        :return: True si queda vida, False si no
+        :rtype: bool
+        """
+        return self.vida_restante > 0
