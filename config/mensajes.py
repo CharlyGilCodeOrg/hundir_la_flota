@@ -7,6 +7,7 @@ TEXTOS = {
     # Inputs
     "TEXTO_POSICION_X": "Introduzca la coordenada x: ",
     "TEXTO_POSICION_Y": "Introduzca la coordenada y: ",
+    "PULSAR_ENTER" : "\nPulsa Enter para continuar...",
 
     # Disparos
     "TEXTO_TOCADO_Y_HUNDIDO": "TOCADO Y HUNDIDO",

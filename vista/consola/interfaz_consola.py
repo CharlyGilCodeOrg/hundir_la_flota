@@ -146,6 +146,8 @@ class InterfazConsola:
             print("")
             print(self.textos["TEXTO_DERROTA"])
 
+        input(self.textos["PULSAR_ENTER"])
+
 
     def borrar_consola(self):
         """
