@@ -181,3 +181,20 @@ class Tablero:
                 y = y + 1
 
         return False
+    
+
+    def obtener_barco_en_posicion(self, x, y):
+        """
+        Obtiene el barco en la posición introducida
+        
+        :param x: Coordenada x.
+        :type x: int
+        :param y: Coordenada y.
+        :type y: int
+        :return: Barco en la posición introducida.
+        :rtype: Barco
+        """
+        caracter_barco = self._casillas[y][x]
+        for barco in self.barcos:
+            if barco.caracter == caracter_barco:
+                return barco
