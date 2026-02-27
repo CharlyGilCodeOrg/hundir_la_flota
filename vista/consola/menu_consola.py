@@ -36,7 +36,7 @@ class Menu:
                     raise SalirDelPrograma()
                 case _:
                     self._interfaz.borrar_consola()
-                    print(self._interfaz.obtener_texto["ERROR_MENU"])
+                    print(self._interfaz.obtener_texto("ERROR_MENU"))
 
     
     def ejecutar_menu_dificultad(self):
@@ -59,7 +59,7 @@ class Menu:
                     return 3
                 case _:
                     self._interfaz.borrar_consola()
-                    print(self._interfaz.obtener_texto["ERROR_MENU"])
+                    print(self._interfaz.obtener_texto("ERROR_MENU"))
 
 
     def _menu_principal(self):
