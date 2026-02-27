@@ -31,8 +31,10 @@ class Menu:
                 case "1":
                     return self.ejecutar_menu_dificultad()
                 case "2":
-                    self._interfaz.mostrar_instrucciones(self._instrucciones)
+                    continue
                 case "3":
+                    self._interfaz.mostrar_instrucciones(self._instrucciones)
+                case "4":
                     raise SalirDelPrograma()
                 case _:
                     self._interfaz.borrar_consola()
@@ -72,9 +74,10 @@ class Menu:
         print("")
         print("HUNDIR LA FLOTA")
         print("")
-        print("1. Jugar")
-        print("2. Instrucciones")
-        print("3. Salir")
+        print("1. Jugar contra la Máquina (PVE)")
+        print("2. Jugar contra otro/a Jugador/a (PVP)")
+        print("3. Instrucciones")
+        print("4. Salir")
         print("")
         return input("Introduzca el número correspondiente a la opción deseada: ")
     
