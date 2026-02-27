@@ -82,8 +82,8 @@ class App:
         """
         Ejecuta el bucle principal de una partida pve.
 
-        :param juego: Instancia del juego en curso.
-        :type juego: Juego
+        :param juego: Instancia del juego pve en curso.
+        :type juego: JuegoPVE
         """
         try:
             self._interfaz.borrar_consola()
@@ -104,6 +104,38 @@ class App:
                 self._interfaz.mostrar_balas(juego.disparos_restantes())
 
             self._interfaz.mostrar_mensaje_final(juego.hay_victoria())
+
+        except VolverAlMenu:
+            self._interfaz.borrar_consola()
+            
+        
+    def _ejecutar_partida_pvp(self, juego):
+        """
+        Ejecuta el bucle principal de una partida pvp.
+
+        Args:
+            juego (JuegoPVP): Instancia del juego pvp en curso.
+        """
+        try:
+            self._interfaz.borrar_consola()
+            while not juego.hay_victoria():
+
+                self._interfaz.opcion_volver_menu()
+                jugador = juego.jugador_actual()
+                self._interfaz.mostrar_turno_jugador(jugador)
+
+                x, y = self._interfaz.pedir_disparo(
+                    juego.tablero_jugador1.ancho,
+                    juego.tablero_jugador1.alto
+                )
+
+                resultado = juego.disparar(x, y)
+
+                self._interfaz.borrar_consola()
+                self._interfaz.mostrar_resultado(resultado)
+
+            ganador = juego.jugador_actual()
+            self._interfaz.mostrar_mensaje_final_pvp(ganador)
 
         except VolverAlMenu:
             self._interfaz.borrar_consola()

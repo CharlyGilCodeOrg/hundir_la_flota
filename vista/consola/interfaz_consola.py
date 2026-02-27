@@ -180,3 +180,14 @@ class InterfazConsola:
         :rtype: str
         """
         return self._textos.get(clave, f"[Texto no encontrado: {clave}]")
+
+
+    def mostrar_turno_jugador(self, jugador):
+        """
+        Muestra el turno del jugador actual.
+
+        :param jugador: Número del jugador actual.
+        :type jugador: int
+        """
+        print("")
+        print(self._textos["TEXTO_TURNO"].format(jugador))

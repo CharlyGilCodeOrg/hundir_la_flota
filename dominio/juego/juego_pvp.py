@@ -52,12 +52,10 @@ class JuegoPVP(Juego):
             """
             if self.turno_actual == 1:
                 tablero_atacado = self.tablero_jugador2
-                tablero_atacante = self.tablero_jugador1
             else:
                 tablero_atacado = self.tablero_jugador1
-                tablero_atacante = self.tablero_jugador2
 
-            if tablero_atacante.disparo_repetido(
+            if tablero_atacado.disparo_repetido(
                 x, y, self._caracter_tocado, self._caracter_agua
             ):
                 return "REPETIDO"
@@ -68,7 +66,6 @@ class JuegoPVP(Juego):
                 barco.recibir_impacto()
 
                 tablero_atacado.marcar_disparo(x, y, self._caracter_tocado)
-                tablero_atacante.marcar_disparo(x, y, self._caracter_tocado)
 
                 if barco.hundido():
                     resultado = "TOCADO_Y_HUNDIDO"
@@ -76,7 +73,6 @@ class JuegoPVP(Juego):
                     resultado = "TOCADO"
             else:
                 tablero_atacado.marcar_disparo(x, y, self._caracter_agua)
-                tablero_atacante.marcar_disparo(x, y, self._caracter_agua)
                 resultado = "AGUA"
 
             self.cambiar_turno()
@@ -88,7 +84,10 @@ class JuegoPVP(Juego):
         """
         Comprueba si quedan barcos en el tablero rival.
 
-        :return: True si un jugador ha ganado, False si no.
+        :return: True si el atacante ha ganado, False si no.
         :rtype: bool
         """
-        return not self.tablero_jugador1.quedan_barcos() or not self.tablero_jugador2.quedan_barcos()
+        if self.turno_actual == 1:
+            return self.tablero_jugador2.barcos_hundidos()
+        else:
+            return self.tablero_jugador1.barcos_hundidos()

@@ -4,6 +4,8 @@ Centraliza todos los mensajes mostrados al usuario.
 """
 
 TEXTOS = {
+    "TEXTO_TURNO": "TURNO DEL JUGADOR {}",
+    
     # Inputs
     "TEXTO_POSICION_X": "Introduzca la coordenada x: ",
     "TEXTO_POSICION_Y": "Introduzca la coordenada y: ",
