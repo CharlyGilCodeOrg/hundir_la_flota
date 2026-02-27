@@ -1,5 +1,6 @@
 from dominio.tablero import Tablero
-from dominio.juego.juego_pve import Juego
+from dominio.juego.juego_pve import JuegoPVE
+from dominio.juego.juego_pvp import JuegoPVP
 from dominio.barco import Barco
 from vista.consola.interfaz_consola import InterfazConsola
 from vista.consola.menu_consola import Menu
@@ -63,7 +64,7 @@ class App:
             constante.CARACTER_VACIO
         )
 
-        return Juego(
+        return JuegoPVE(
             tablero_usuario,
             tablero_interno,
             config["disparos"],

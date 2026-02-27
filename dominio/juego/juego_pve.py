@@ -1,4 +1,4 @@
-from juego import Juego
+from dominio.juego.juego import Juego
 
 class JuegoPVE(Juego):
     def __init__(self, tablero_usuario, tablero_barco, disparos_maximos, caracter_vacio, caracter_tocado, caracter_agua):
