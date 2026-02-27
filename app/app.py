@@ -27,16 +27,20 @@ class App:
         """
         try:
             while True:
-                dificultad = self._menu.ejecutar_menu_principal()
-                juego = self._crear_juego(dificultad)
-                self._ejecutar_partida(juego)
+                opcion = self._menu.ejecutar_menu_principal()
+                if opcion in [1, 2, 3]:
+                    dificultad = opcion
+                    juego_pve = self._crear_juego_pve(dificultad)
+                    self._ejecutar_partida_pve(juego_pve)
+                else:
+                    continue
         except SalirDelPrograma:
             self._interfaz.fin_programa()
 
 
-    def _crear_juego(self, dificultad):
+    def _crear_juego_pve(self, dificultad):
         """
-        Crea e inicializa una nueva partida del juego.
+        Crea e inicializa una nueva partida pve del juego.
 
         :param dificultad: Índice para la dificultad
         :type dificultad: int
@@ -74,9 +78,9 @@ class App:
         )
 
 
-    def _ejecutar_partida(self, juego):
+    def _ejecutar_partida_pve(self, juego):
         """
-        Ejecuta el bucle principal de una partida.
+        Ejecuta el bucle principal de una partida pve.
 
         :param juego: Instancia del juego en curso.
         :type juego: Juego

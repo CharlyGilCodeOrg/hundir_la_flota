@@ -31,7 +31,7 @@ class Menu:
                 case "1":
                     return self.ejecutar_menu_dificultad()
                 case "2":
-                    continue
+                    return 4
                 case "3":
                     self._interfaz.mostrar_instrucciones(self._instrucciones)
                 case "4":

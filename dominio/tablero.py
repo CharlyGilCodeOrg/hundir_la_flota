@@ -95,6 +95,27 @@ class Tablero:
         
         if intentos == intentos_maximos:
             raise RuntimeError("No se pudieron colocar todos los barcos")
+        
+        
+    def colocar_barco_manual(self, barco, x, y, horizontal):
+        """
+        Coloca un barco en el tablero según la posición y orientación indicadas por el usuario.
+
+        :param barco: Barco que se va a colocar en el tablero.
+        :type barco: Barco
+        :param x: Coordenada inicial en el eje X.
+        :type x: int
+        :param y: Coordenada inicial en el eje Y.
+        :type y: int
+        :param horizontal: Orientación del barco (True para horizontal, False para vertical).
+        :type horizontal: bool
+        """
+        barco.horizontal = horizontal
+
+        if self._ya_hay_barco_en_posicion(barco, x, y):
+            raise ValueError("Ya hay un barco en esa posición.")
+
+        self._rellenar_tablero(barco, x, y)
 
 
     def disparo_repetido(self, x, y, caracter_tocado, caracter_agua):
