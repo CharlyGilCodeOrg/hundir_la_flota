@@ -1,7 +1,8 @@
 # Hundir la Flota - Versión 3.0
 
 **Hundir la Flota** es un juego de estrategia tipo "batalla naval" desarrollado en **Python 3.13.2**.  
-El jugador debe hundir todos los barcos del tablero haciendo disparos coordinados. Esta versión 3.0 incluye mejoras en la organización del código, modularidad y una interfaz de consola clara.
+El jugador debe hundir todos los barcos del tablero haciendo disparos coordinados. 
+Esta versión 3.0 incluye mejoras en la organización del código, modularidad, una interfaz de consola clara y disitintas dificultades.
 
 ---
 
