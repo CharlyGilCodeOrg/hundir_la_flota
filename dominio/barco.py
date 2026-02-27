@@ -2,7 +2,7 @@ import random
 
 class Barco:
 
-    def __init__(self, tamanyo, cantidad, caracter):
+    def __init__(self, tamanyo, cantidad, caracter, horizontal = None):
         """
         Inicializa un barco con un tamaño y una orientación aleatoria.
         La vida restante es igual al tamaño y se va reduciendo en 1
@@ -14,12 +14,17 @@ class Barco:
         :type cantidad: int
         :param caracter: Carácter que representa al barco.
         :type caracter: str
+        :param horizontal: Booleano que indica si es horizontal (True) o vertical (False). Si no se introduce, se genera aleatorio.
+        :type caracter: bool
         """
         self.tamanyo = tamanyo
         self.cantidad = cantidad
         self.caracter = caracter
         self._vida_restante = tamanyo
-        self.horizontal = self.es_horizontal()
+        if horizontal is not None: 
+            self._horizontal = horizontal
+        else: 
+            self._horizontal = self.es_horizontal()
 
 
     def es_horizontal(self):
