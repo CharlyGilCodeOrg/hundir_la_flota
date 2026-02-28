@@ -1,15 +1,7 @@
-from partida import Partida
-from globales import jugador_partida, enviar
+from red.partida import Partida
+from red.globales import enviar, jugador_partida
 import asyncio
 import json
-
-# cola_espera = []
-# partidas_activas = []
-# jugador_partida = {}
-
-# async def enviar(writer, data):
-#     writer.write((json.dumps(data) + "\n").encode())
-#     await writer.drain()
 
 class Servidor:
 
@@ -17,7 +9,7 @@ class Servidor:
         self.host = host
         self.port = port
         self.cola_espera = []
-        self.partidas_activas = {}
+        self.partidas_activas = []
         
 
     async def iniciar(self):

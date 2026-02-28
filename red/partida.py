@@ -1,8 +1,8 @@
 import asyncio
-import json
-from globales import jugador_partida, enviar
-
-# jugador_partida = {}
+from red.globales import enviar, jugador_partida
+from dominio.tablero import Tablero
+from dominio.barco import Barco
+from config.constantes import CARACTER_AGUA, CARACTER_VACIO, CARACTER_TOCADO, DIFICULTAD
 
 class Partida:
 
@@ -13,6 +13,28 @@ class Partida:
     def __init__(self, jugador1, jugador2):
         self.jugador1 = jugador1
         self.jugador2 = jugador2
+        # self.barcos_config = [
+        #     ("PORTAAVIONES", 5),
+        #     ("ACORAZADO", 4),
+        #     ("DESTRUCTOR", 3),
+        #     ("SUBMARINO", 3),
+        #     ("LANCHA", 2),
+        # ]
+        
+        barcos = [
+            Barco(longitud, cantidad, identificador)
+            for longitud, cantidad, identificador in DIFICULTAD["PVP"]["barcos"]
+        ]
+        
+        self.tableros = {
+            self.jugador1: Tablero(DIFICULTAD["PVP"]["ancho"], DIFICULTAD["PVP"]["alto"], barcos, CARACTER_VACIO),
+            self.jugador2: Tablero(DIFICULTAD["PVP"]["ancho"], DIFICULTAD["PVP"]["alto"], barcos, CARACTER_VACIO)
+        }
+
+        self.barcos_pendientes = {
+            self.jugador1: list(barcos),
+            self.jugador2: list(barcos)
+        }
 
         self.estado = self.ESPERANDO_COLOCACION
 
@@ -49,18 +71,68 @@ class Partida:
 
 
     async def procesar_colocacion(self, writer, mensaje):
-        if mensaje.get("tipo") == "listo":
 
+        if mensaje.get("tipo") != "colocar":
+            return
+
+        barco_caracter = mensaje.get("barco")
+        x = mensaje.get("x")
+        y = mensaje.get("y")
+        horizontal = mensaje.get("horizontal")
+
+        pendientes = self.barcos_pendientes[writer]
+
+        barco_info = next((b for b in pendientes if b.caracter == barco_caracter), None)
+
+        if not barco_info:
+            await self.enviar(writer, {
+                "tipo": "error",
+                "mensaje": "Barco no disponible"
+            })
+            return
+
+        tamaño = barco_info.tamanyo
+        cantidad = barco_info.cantidad
+        horizontal = barco_info._horizontal
+
+        tablero = self.tableros[writer]
+
+        try:
+            barco = Barco(barco_nombre, tamaño)
+            hay_barco_en_posicion = tablero.colocar_barco(barco, x, y, horizontal)
+            if hay_barco_en_posicion:
+                await self.enviar(writer, {
+                "tipo": "error",
+                "mensaje": "Ya hay un barco en esa posición"
+            })
+                return
+
+        except Exception as e:
+            await enviar(writer, {
+                "tipo": "error",
+                "mensaje": str(e)
+            })
+            return
+
+        pendientes.remove(barco_info)
+
+        await self.enviar(writer, {
+            "tipo": "confirmacion",
+            "mensaje": f"{barco_nombre} colocado correctamente"
+        })
+
+        if not pendientes:
             self.jugadores_listos.add(writer)
 
-            await enviar(writer, {
-                "tipo": "confirmacion",
+            await self.enviar(writer, {
+                "tipo": "espera",
                 "mensaje": "Esperando al otro jugador..."
             })
 
             if len(self.jugadores_listos) == 2:
                 self.estado = self.JUGANDO
                 await self.comenzar_juego()
+
                 
 
     async def procesar_juego(self, writer, mensaje):
