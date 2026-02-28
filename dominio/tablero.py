@@ -109,13 +109,16 @@ class Tablero:
         :type y: int
         :param horizontal: Orientación del barco (True para horizontal, False para vertical).
         :type horizontal: bool
+        :return: True si se coloca el barco y False si había barco en posición.
+        :rtype: bool
         """
         barco.horizontal = horizontal
 
         if self._ya_hay_barco_en_posicion(barco, x, y):
-            raise ValueError("Ya hay un barco en esa posición.")
+            return False
 
         self._rellenar_tablero(barco, x, y)
+        return True
 
 
     def disparo_repetido(self, x, y, caracter_tocado, caracter_agua):
