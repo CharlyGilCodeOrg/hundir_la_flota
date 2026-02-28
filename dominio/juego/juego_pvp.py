@@ -40,45 +40,45 @@ class JuegoPVP(Juego):
         
         
     def disparar(self, x, y):
-            """
-            Realiza un disparo sobre el tablero del oponente.
+        """
+        Realiza un disparo sobre el tablero del oponente.
 
-            :param x: Coordenada X.
-            :type x: int
-            :param y: Coordenada Y.
-            :type y: int
-            :return: Resultado del disparo.
-            :rtype: str
-            """
-            if self.turno_actual == 1:
-                tablero_atacado = self.tablero_jugador2
+        :param x: Coordenada X.
+        :type x: int
+        :param y: Coordenada Y.
+        :type y: int
+        :return: Resultado del disparo.
+        :rtype: str
+        """
+        if self.turno_actual == 1:
+            tablero_atacado = self.tablero_jugador2
+        else:
+            tablero_atacado = self.tablero_jugador1
+
+        if tablero_atacado.disparo_repetido(
+            x, y, self._caracter_tocado, self._caracter_agua
+        ):
+            return "REPETIDO"
+
+        if tablero_atacado.comprobar_acierto(x, y):
+
+            barco = tablero_atacado.obtener_barco_en_posicion(x, y)
+            barco.recibir_impacto()
+
+            tablero_atacado.marcar_disparo(x, y, self._caracter_tocado)
+
+            if barco.hundido():
+                resultado = "TOCADO_Y_HUNDIDO"
             else:
-                tablero_atacado = self.tablero_jugador1
+                resultado = "TOCADO"
+        else:
+            tablero_atacado.marcar_disparo(x, y, self._caracter_agua)
+            resultado = "AGUA"
 
-            if tablero_atacado.disparo_repetido(
-                x, y, self._caracter_tocado, self._caracter_agua
-            ):
-                return "REPETIDO"
+        # self.cambiar_turno()
 
-            if tablero_atacado.comprobar_acierto(x, y):
-
-                barco = tablero_atacado.obtener_barco_en_posicion(x, y)
-                barco.recibir_impacto()
-
-                tablero_atacado.marcar_disparo(x, y, self._caracter_tocado)
-
-                if barco.hundido():
-                    resultado = "TOCADO_Y_HUNDIDO"
-                else:
-                    resultado = "TOCADO"
-            else:
-                tablero_atacado.marcar_disparo(x, y, self._caracter_agua)
-                resultado = "AGUA"
-
-            self.cambiar_turno()
-
-            return resultado
-        
+        return resultado
+    
         
     def hay_victoria(self):
         """
