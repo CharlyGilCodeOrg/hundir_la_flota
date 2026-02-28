@@ -1,6 +1,5 @@
 from dominio.tablero import Tablero
 from dominio.juego.juego_pve import JuegoPVE
-from dominio.juego.juego_pvp import JuegoPVP
 from dominio.barco import Barco
 from vista.consola.interfaz_consola import InterfazConsola
 from vista.consola.menu_consola import Menu
@@ -44,8 +43,8 @@ class App:
 
         :param dificultad: Índice para la dificultad
         :type dificultad: int
-        :return: Objeto Juego inicializado.
-        :rtype: Juego
+        :return: Objeto JuegoPVE inicializado.
+        :rtype: JuegoPVE
         """
         config = constante.DIFICULTAD[dificultad]
 
@@ -104,38 +103,6 @@ class App:
                 self._interfaz.mostrar_balas(juego.disparos_restantes())
 
             self._interfaz.mostrar_mensaje_final(juego.hay_victoria())
-
-        except VolverAlMenu:
-            self._interfaz.borrar_consola()
-            
-        
-    def _ejecutar_partida_pvp(self, juego):
-        """
-        Ejecuta el bucle principal de una partida pvp.
-
-        Args:
-            juego (JuegoPVP): Instancia del juego pvp en curso.
-        """
-        try:
-            self._interfaz.borrar_consola()
-            while not juego.hay_victoria():
-
-                self._interfaz.opcion_volver_menu()
-                jugador = juego.jugador_actual()
-                self._interfaz.mostrar_turno_jugador(jugador)
-
-                x, y = self._interfaz.pedir_disparo(
-                    juego.tablero_jugador1.ancho,
-                    juego.tablero_jugador1.alto
-                )
-
-                resultado = juego.disparar(x, y)
-
-                self._interfaz.borrar_consola()
-                self._interfaz.mostrar_resultado(resultado)
-
-            ganador = juego.jugador_actual()
-            self._interfaz.mostrar_mensaje_final_pvp(ganador)
 
         except VolverAlMenu:
             self._interfaz.borrar_consola()
