@@ -17,19 +17,15 @@ class Partida:
         self.jugador2 = jugador2
         self.turno = self.jugador1
         
-        barcos = [
-            Barco(longitud, cantidad, identificador)
-            for longitud, cantidad, identificador in DIFICULTAD["PVP"]["barcos"]
-        ]
         
         self.tableros = {
-            self.jugador1: Tablero(self.ANCHO_TABLEROS, self.ALTO_TABLEROS, barcos, CARACTER_VACIO, CARACTER_TOCADO, CARACTER_AGUA),
-            self.jugador2: Tablero(self.ANCHO_TABLEROS, self.ALTO_TABLEROS, barcos, CARACTER_VACIO, CARACTER_TOCADO, CARACTER_AGUA)
+            self.jugador1: Tablero(self.ANCHO_TABLEROS, self.ALTO_TABLEROS, self.crear_barcos(), CARACTER_VACIO, CARACTER_TOCADO, CARACTER_AGUA),
+            self.jugador2: Tablero(self.ANCHO_TABLEROS, self.ALTO_TABLEROS, self.crear_barcos(), CARACTER_VACIO, CARACTER_TOCADO, CARACTER_AGUA)
         }
 
         self.barcos_pendientes = {
-            self.jugador1: list(barcos),
-            self.jugador2: list(barcos)
+            self.jugador1: self.crear_barcos(),
+            self.jugador2: self.crear_barcos()
         }
 
         self.estado = self.ESPERANDO_COLOCACION
@@ -42,7 +38,14 @@ class Partida:
         jugador_partida[jugador2] = self
 
         asyncio.create_task(self.iniciar())
-        
+    
+    
+    def crear_barcos(self):
+        return [
+            Barco(longitud, cantidad, identificador)
+            for longitud, cantidad, identificador in DIFICULTAD["PVP"]["barcos"]
+        ]
+    
         
     async def iniciar(self):
         await enviar(self.jugador1, {
@@ -222,4 +225,24 @@ class Partida:
         
     def oponente(self, writer):
         return self.jugador2 if writer == self.jugador1 else self.jugador1
+
+
+    async def jugador_desconectado(self, writer):
+        if self.estado == self.FINALIZADA:
+            return
+
+        oponente = self.oponente(writer)
+
+        self.estado = self.FINALIZADA
+
+        try:
+            await enviar(oponente, {
+                "tipo": "fin",
+                "victoria": True,
+                "motivo": "El rival se desconectó"
+            })
+        except:
+            pass
+
+        print("Partida finalizada por desconexión")
 

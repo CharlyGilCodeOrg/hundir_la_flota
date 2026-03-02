@@ -117,6 +117,9 @@ class Tablero:
         :return: True si se coloca el barco y False si había barco en posición.
         :rtype: bool
         """
+        if not self._posicion_valida(barco, x, y):
+            return False
+    
         if self._ya_hay_barco_en_posicion(barco, x, y):
             return False
 
@@ -295,3 +298,20 @@ class Tablero:
         :rtype: bool
         """
         return not self.quedan_barcos()
+    
+    
+    def _posicion_valida(self, barco, x, y):
+        tam = barco.tamanyo
+
+        # Coordenadas iniciales válidas
+        if x < 0 or y < 0 or x > self.ancho or y > self.alto:
+            return False
+
+        if barco.get_horizontal():
+            if x + tam > self.ancho:
+                return False
+        else:
+            if y + tam > self.alto:
+                return False
+
+        return True
