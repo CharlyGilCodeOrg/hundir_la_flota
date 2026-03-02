@@ -92,6 +92,17 @@ class ClientePVP:
             self.activo = False
             self.writer.close()
             await self.writer.wait_closed()
+        
+        elif tipo == "lista_barcos":
+            print("\nBarcos disponibles:")
+            for barco in mensaje["barcos"]:
+                print(f"{barco['indice']}. {barco['nombre']} (tamaño {barco['tamanyo']})")
+
+        elif tipo == "estado_tableros":
+            self.mostrar_estado(
+                mensaje["propio"],
+                mensaje["rival"]
+            )
 
 
     async def input_async(self, mensaje):
@@ -115,51 +126,38 @@ class ClientePVP:
 
     async def fase_colocacion(self):
         while self.colocando and self.activo:
-            caracter = await self.input_async("Carácter del barco: ")
 
-            if caracter.lower() == "salir":
-                await self.salir_partida()
+            indice = await self.leer_entero("Selecciona número de barco: ")
+            if indice is None:
                 return
 
-            x = await self.leer_entero("X: ")
+            x = await self.leer_entero("Coordenada X: ")
             if x is None:
                 return
 
-            y = await self.leer_entero("Y: ")
+            y = await self.leer_entero("Coordenada Y: ")
             if y is None:
                 return
 
             while True:
-                orientacion = await self.input_async("Horizontal (s/n): ")
+                orientacion = await self.input_async("Horizontal o Vertical (h/v): ")
 
                 if orientacion.lower() == "salir":
                     await self.salir_partida()
                     return
 
-                if orientacion.lower() in ("s", "n"):
-                    horizontal = orientacion.lower() == "s"
+                if orientacion.lower() in ("h", "v"):
+                    horizontal = orientacion.lower() == "h"
                     break
 
-                print("Debes introducir 's' o 'n'.")
-
-            tamanyo = await self.leer_entero("Tamaño: ")
-            if tamanyo is None:
-                return
-
-            nombre = await self.input_async("Nombre barco: ")
-
-            if nombre.lower() == "salir":
-                await self.salir_partida()
-                return
+                print("Debes introducir 'h' o 'v'.")
 
             await enviar(self.writer, {
-                "tipo": "colocar",
-                "caracter": caracter,
+                "tipo": "seleccionar_barco",
+                "indice": indice,
                 "x": x,
                 "y": y,
-                "horizontal": horizontal,
-                "tamanyo": tamanyo,
-                "barco_nombre": nombre
+                "horizontal": horizontal
             })
 
 
@@ -192,6 +190,27 @@ class ClientePVP:
 
         self.writer.close()
         await self.writer.wait_closed()
+        
+    
+    def mostrar_estado(self, propio, rival):
+        print("\n=== ESTADO DE LA PARTIDA ===\n")
+
+        ancho = len(propio[0])
+
+        encabezado = "   " + " ".join(str(i) for i in range(ancho))
+        print("TU TABLERO".ljust(25) + "TABLERO RIVAL")
+        print(encabezado.ljust(25) + encabezado)
+
+        for i in range(len(propio)):
+            fila_propia = " ".join(propio[i])
+            fila_rival = " ".join(rival[i])
+
+            print(
+                f"{i:2} {fila_propia}".ljust(25) +
+                f"{i:2} {fila_rival}"
+            )
+
+        print()
 
 
     async def ejecutar(self):

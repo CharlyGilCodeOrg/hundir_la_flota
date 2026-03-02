@@ -37,13 +37,11 @@ class Barco:
 
         :param horizontal: Si el usuario lo introduce, elige orientación del barco.
         :type horizontal: bool
-        :return: True si es horizontal, False si es vertical.
-        :rtype: bool
         """
         if horizontal is not None:
-            return self._horizontal
+            self._horizontal = horizontal
         else:
-            return random.choice([True, False])
+            self._horizontal = random.choice([True, False])
         
     
     def get_horizontal(self):

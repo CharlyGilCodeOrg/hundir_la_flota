@@ -42,8 +42,8 @@ class Partida:
     
     def crear_barcos(self):
         return [
-            Barco(nombre, longitud, cantidad, identificador)
-            for nombre, longitud, cantidad, identificador in DIFICULTAD["PVP"]["barcos"]
+            Barco(nombre, tamanyo, cantidad, caracter)
+            for nombre, tamanyo, cantidad, caracter in DIFICULTAD["PVP"]["barcos"]
         ]
     
         
@@ -59,6 +59,10 @@ class Partida:
             "jugador": 2,
             "estado": self.estado
         })
+        
+        await self.enviar_lista_barcos(self.jugador1)
+        await self.enviar_lista_barcos(self.jugador2)
+
 
 
     async def recibir_mensaje(self, writer, mensaje):
@@ -71,37 +75,46 @@ class Partida:
 
     async def procesar_colocacion(self, writer, mensaje):
 
-        if mensaje.get("tipo") != "colocar":
+        if mensaje.get("tipo") != "seleccionar_barco":
             return
 
-        caracter = mensaje.get("caracter")
+        indice = mensaje.get("indice")
         x = mensaje.get("x")
         y = mensaje.get("y")
         horizontal = mensaje.get("horizontal")
-        tamanyo = mensaje.get("tamanyo")
-        barco_nombre = mensaje.get("barco_nombre")
 
         pendientes = self.barcos_pendientes[writer]
 
-        barco_info = next((b for b in pendientes if b.caracter == caracter), None)
-
-        if not barco_info:
+        if not indice or indice < 1 or indice > len(pendientes):
             await enviar(writer, {
                 "tipo": "error",
-                "mensaje": "Barco no disponible"
+                "mensaje": "Selección inválida"
             })
             return
+
+        barco_info = pendientes[indice - 1]
 
         tablero = self.tableros[writer]
 
         try:
-            barco = Barco(tamanyo, 1, caracter, horizontal)
-            barco_colocado = tablero.colocar_barco_manual(barco, x, y)
-            if not barco_colocado:
+            barco = Barco(
+                barco_info.nombre,
+                barco_info.tamanyo,
+                barco_info.cantidad,
+                barco_info.caracter
+            )
+            barco.set_horizontal(horizontal) 
+
+            print("DEBUG horizontal:", horizontal)
+            print("DEBUG x,y:", x, y)
+            
+            colocado = tablero.colocar_barco_manual(barco, x, y)
+
+            if not colocado:
                 await enviar(writer, {
-                "tipo": "error",
-                "mensaje": "Ya hay un barco en esa posición"
-            })
+                    "tipo": "error",
+                    "mensaje": "Posición inválida"
+                })
                 return
 
         except Exception as e:
@@ -115,10 +128,14 @@ class Partida:
 
         await enviar(writer, {
             "tipo": "confirmacion",
-            "mensaje": f"{barco_nombre} colocado correctamente"
+            "mensaje": f"{barco_info.nombre} colocado correctamente"
         })
+        
+        await self.enviar_estado_tableros(writer)
 
-        if not pendientes:
+        if pendientes:
+            await self.enviar_lista_barcos(writer)
+        else:
             self.jugadores_listos.add(writer)
 
             await enviar(writer, {
@@ -129,6 +146,7 @@ class Partida:
             if len(self.jugadores_listos) == 2:
                 self.estado = self.JUGANDO
                 await self.comenzar_juego()
+
 
                 
 
@@ -165,6 +183,8 @@ class Partida:
                 "x": x,
                 "y": y
             })
+            await self.enviar_estado_tableros(writer)
+            await self.enviar_estado_tableros(defensor)
 
             if tablero_defensor.todos_hundidos():
                 self.estado = self.FINALIZADA
@@ -245,4 +265,32 @@ class Partida:
             pass
 
         print("Partida finalizada por desconexión")
+
+
+    async def enviar_lista_barcos(self, writer):
+        pendientes = self.barcos_pendientes[writer]
+
+        lista = []
+        for i, barco in enumerate(pendientes, start=1):
+            lista.append({
+                "indice": i,
+                "nombre": barco.nombre,
+                "tamanyo": barco.tamanyo
+            })
+
+        await enviar(writer, {
+            "tipo": "lista_barcos",
+            "barcos": lista
+        })
+
+
+    async def enviar_estado_tableros(self, writer):
+        propio = self.tableros[writer]
+        rival = self.tableros[self.oponente(writer)]
+
+        await enviar(writer, {
+            "tipo": "estado_tableros",
+            "propio": propio.ver_tablero(),
+            "rival": rival.ver_tablero_rival()
+        })
 

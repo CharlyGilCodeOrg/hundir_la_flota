@@ -41,6 +41,32 @@ class Tablero:
         :rtype: list
         """
         return self.__casillas
+    
+    
+    def ver_tablero_rival(self):
+        """
+        Devuelve el tablero rival.
+
+        :return: Array que representa el tablero rival con los barcos ocultos.
+        :rtype: list
+        """
+        vista = []
+
+        for fila in self.__casillas:
+            nueva_fila = []
+            for celda in fila:
+                if celda not in (
+                    self._caracter_agua,
+                    self._caracter_tocado
+                ):
+                    # Es un barco no tocado → ocultar
+                    nueva_fila.append(self._caracter_vacio)
+                else:
+                    nueva_fila.append(celda)
+
+            vista.append(nueva_fila)
+
+        return vista
 
 
     def quedan_barcos(self):
@@ -114,7 +140,7 @@ class Tablero:
         :type x: int
         :param y: Coordenada inicial en el eje Y.
         :type y: int
-        :return: True si se coloca el barco y False si había barco en posición.
+        :return: True si se coloca el barco y False si había barco en posición o la posición no es válida.
         :rtype: bool
         """
         if not self._posicion_valida(barco, x, y):
