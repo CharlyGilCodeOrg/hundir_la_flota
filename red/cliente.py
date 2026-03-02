@@ -67,8 +67,14 @@ class ClientePVP:
 
         elif tipo == "error":
             print("Error:", mensaje["mensaje"])
+            # Si estoy jugando y es mi turno, volver a pedir disparo
+            if self.estado == "jugando" and self.mi_turno:
+                if self.tarea_input and not self.tarea_input.done():
+                    self.tarea_input.cancel()
+                    self.tarea_input = asyncio.create_task(self.fase_turno())
 
         elif tipo == "turno":
+            self.estado = "jugando"
             self.colocando = False
             self.mi_turno = mensaje["tu_turno"]
 
@@ -175,6 +181,7 @@ class ClientePVP:
 
     async def fase_turno(self):
         try:
+            await asyncio.sleep(0)  # fuerza cambio de contexto
             if not self.mi_turno or not self.activo:
                 return
 

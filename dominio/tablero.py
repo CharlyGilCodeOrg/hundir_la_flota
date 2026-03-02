@@ -122,7 +122,7 @@ class Tablero:
             posicion_x = random.randint(0, max_x)
             posicion_y = random.randint(0, max_y)
 
-            if not self._ya_hay_barco_en_posicion(barco, posicion_x, posicion_y):
+            if self._puede_colocarse(barco, posicion_x, posicion_y):
                 self._rellenar_tablero(barco, posicion_x, posicion_y)
                 contador = contador + 1
         
@@ -143,10 +143,7 @@ class Tablero:
         :return: True si se coloca el barco y False si había barco en posición o la posición no es válida.
         :rtype: bool
         """
-        if not self._posicion_valida(barco, x, y):
-            return False
-    
-        if self._ya_hay_barco_en_posicion(barco, x, y):
+        if not self._puede_colocarse(barco, x, y):
             return False
 
         self._rellenar_tablero(barco, x, y)
@@ -208,33 +205,6 @@ class Tablero:
             for i in range(barco.tamanyo):
                 self.__casillas[y][x] = barco.caracter
                 y = y + 1
-
-
-    def _ya_hay_barco_en_posicion(self, barco, x, y):
-        """
-        Comprueba si ya existe un barco en las posiciones donde se pretende colocar otro.
-
-        :param barco: Barco que se pretende colocar en el tablero.
-        :type barco: Barco
-        :param x: Coordenada inicial en el eje X.
-        :type x: int
-        :param y: Coordenada inicial en el eje Y.
-        :type y: int
-        :return: True si hay un barco en alguna posición, False en caso contrario.
-        :rtype: bool
-        """
-        if barco.get_horizontal():
-            for i in range(barco.tamanyo):
-                if self.__casillas[y][x] in self._caracteres_barcos:
-                    return True
-                x = x + 1
-        else:
-            for i in range(barco.tamanyo):
-                if self.__casillas[y][x] in self._caracteres_barcos:
-                    return True
-                y = y + 1
-
-        return False
     
 
     def obtener_barco_en_posicion(self, x, y):
@@ -291,9 +261,11 @@ class Tablero:
         :return: Resultado del disparo.
         :rtype: str
         """
-        if self.disparo_repetido(
-            x, y
-        ):
+        # Validación centralizada aquí
+        if not self._coordenadas_validas(x, y):
+            raise ValueError("Coordenadas fuera del tablero")
+
+        if self.disparo_repetido(x, y):
             return "REPETIDO"
 
         if self.comprobar_acierto(x, y):
@@ -308,11 +280,7 @@ class Tablero:
                 return "TOCADO"
 
         else:
-            self.marcar_disparo(
-                x,
-                y,
-                self._caracter_agua
-            )
+            self.marcar_disparo(x, y, self._caracter_agua)
             return "AGUA"
         
         
@@ -324,20 +292,49 @@ class Tablero:
         :rtype: bool
         """
         return not self.quedan_barcos()
-    
-    
-    def _posicion_valida(self, barco, x, y):
-        tam = barco.tamanyo
 
-        # Coordenadas iniciales válidas
-        if x < 0 or y < 0 or x > self.ancho or y > self.alto:
+
+    def _coordenadas_validas(self, x, y):
+        return (
+            isinstance(x, int) and
+            isinstance(y, int) and
+            0 <= x < self.ancho and
+            0 <= y < self.alto
+        )
+        
+    
+    def _puede_colocarse(self, barco, x, y):
+        """
+        Comprueba si un barco puede colocarse en la posición indicada,
+        validando límites y solapamientos en un único recorrido.
+        
+        :param barco: Barco que se pretende colocar en el tablero.
+        :type barco: Barco
+        :param x: Coordenada X.
+        :type x: int
+        :param y: Coordenada Y.
+        :type y: int
+        :return: True si puede colocarse y False si no.
+        :rtype: bool
+        """
+        # Coordenada inicial válida
+        if not self._coordenadas_validas(x, y):
             return False
 
-        if barco.get_horizontal():
-            if x + tam > self.ancho:
+        for i in range(barco.tamanyo):
+            if barco.get_horizontal():
+                nx = x + i
+                ny = y
+            else:
+                nx = x
+                ny = y + i
+
+            # Validar límites
+            if not self._coordenadas_validas(nx, ny):
                 return False
-        else:
-            if y + tam > self.alto:
+
+            # Validar solapamiento
+            if self.__casillas[ny][nx] in self._caracteres_barcos:
                 return False
 
         return True

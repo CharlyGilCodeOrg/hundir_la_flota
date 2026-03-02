@@ -213,8 +213,8 @@ class Partida:
                     "tipo": "turno",
                     "tu_turno": False
                 })
-
-        except Exception as e:
+                
+        except ValueError as e:
             await enviar(writer, {
                 "tipo": "error",
                 "mensaje": str(e)
