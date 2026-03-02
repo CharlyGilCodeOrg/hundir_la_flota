@@ -1,7 +1,5 @@
 import json
 
-cola_espera = []
-partidas_activas = []
 jugador_partida = {}
 
 async def enviar(writer, data):
