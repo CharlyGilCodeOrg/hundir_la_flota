@@ -10,12 +10,12 @@ class ClientePVP:
         self.port = port
         self.reader = None
         self.writer = None
-
         self.jugador_num = None
         self.estado = None
         self.mi_turno = False
         self.colocando = False
         self.activo = True
+        self.tarea_input = None
 
 
     async def conectar(self):
@@ -55,8 +55,12 @@ class ClientePVP:
             print(f"Eres jugador {self.jugador_num}")
             print("Fase de colocación iniciada.")
             print("Escribe 'salir' en cualquier momento para abandonar la partida.")
+
             self.colocando = True
-            asyncio.create_task(self.fase_colocacion())
+
+            if not self.tarea_input or self.tarea_input.done():
+                self.tarea_input = asyncio.create_task(self.fase_colocacion())
+
 
         elif tipo == "confirmacion":
             print(mensaje["mensaje"])
@@ -65,11 +69,16 @@ class ClientePVP:
             print("Error:", mensaje["mensaje"])
 
         elif tipo == "turno":
+            self.colocando = False
             self.mi_turno = mensaje["tu_turno"]
+
+            # CANCELAR tarea anterior si sigue viva
+            if self.tarea_input and not self.tarea_input.done():
+                self.tarea_input.cancel()
 
             if self.mi_turno:
                 print("Es tu turno.")
-                asyncio.create_task(self.fase_turno())
+                self.tarea_input = asyncio.create_task(self.fase_turno())
             else:
                 print("Turno del rival.")
 
@@ -125,59 +134,66 @@ class ClientePVP:
 
 
     async def fase_colocacion(self):
-        while self.colocando and self.activo:
-
-            indice = await self.leer_entero("Selecciona número de barco: ")
-            if indice is None:
-                return
-
-            x = await self.leer_entero("Coordenada X: ")
-            if x is None:
-                return
-
-            y = await self.leer_entero("Coordenada Y: ")
-            if y is None:
-                return
-
-            while True:
-                orientacion = await self.input_async("Horizontal o Vertical (h/v): ")
-
-                if orientacion.lower() == "salir":
-                    await self.salir_partida()
+        try:
+            while self.colocando and self.activo:
+                indice = await self.leer_entero("Selecciona número de barco: ")
+                if indice is None:
                     return
 
-                if orientacion.lower() in ("h", "v"):
-                    horizontal = orientacion.lower() == "h"
-                    break
+                x = await self.leer_entero("Coordenada X: ")
+                if x is None:
+                    return
 
-                print("Debes introducir 'h' o 'v'.")
+                y = await self.leer_entero("Coordenada Y: ")
+                if y is None:
+                    return
 
-            await enviar(self.writer, {
-                "tipo": "seleccionar_barco",
-                "indice": indice,
-                "x": x,
-                "y": y,
-                "horizontal": horizontal
-            })
+                while True:
+                    orientacion = await self.input_async("Horizontal o Vertical (h/v): ")
+
+                    if orientacion.lower() == "salir":
+                        await self.salir_partida()
+                        return
+
+                    if orientacion.lower() in ("h", "v"):
+                        horizontal = orientacion.lower() == "h"
+                        break
+
+                    print("Debes introducir 'h' o 'v'.")
+
+                await enviar(self.writer, {
+                    "tipo": "seleccionar_barco",
+                    "indice": indice,
+                    "x": x,
+                    "y": y,
+                    "horizontal": horizontal
+                })
+                
+        except asyncio.CancelledError:
+            return
 
 
     async def fase_turno(self):
-        if not self.mi_turno or not self.activo:
-            return
+        try:
+            if not self.mi_turno or not self.activo:
+                return
 
-        x = await self.leer_entero("Coordenada X del disparo: ")
-        if x is None:
-            return
+            x = await self.leer_entero("Coordenada X del disparo: ")
+            if x is None:
+                return
 
-        y = await self.leer_entero("Coordenada Y del disparo: ")
-        if y is None:
-            return
+            y = await self.leer_entero("Coordenada Y del disparo: ")
+            if y is None:
+                return
 
-        await enviar(self.writer, {
-            "tipo": "disparo",
-            "x": x,
-            "y": y
-        })
+            await enviar(self.writer, {
+                "tipo": "disparo",
+                "x": x,
+                "y": y
+            })
+            
+        except asyncio.CancelledError:
+            return
 
 
     async def salir_partida(self):
