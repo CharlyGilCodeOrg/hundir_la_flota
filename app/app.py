@@ -1,5 +1,5 @@
 from dominio.tablero import Tablero
-from dominio.juego.juego_pve import JuegoPVE
+from dominio.juego_pve import JuegoPVE
 from dominio.barco import Barco
 from vista.consola.interfaz_consola import InterfazConsola
 from vista.consola.menu_consola import Menu
