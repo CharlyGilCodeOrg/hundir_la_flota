@@ -4,7 +4,6 @@ from dominio.barco import Barco
 from vista.consola.interfaz_consola import InterfazConsola
 from vista.consola.menu_consola import Menu
 from utils.excepciones import VolverAlMenu
-from config.mensajes import TEXTOS, INSTRUCCIONES
 import config.constantes as constante
 from controladores.controlador import Controlador
 
