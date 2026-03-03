@@ -1,8 +1,9 @@
 from utils.excepciones import SalirDelPrograma
+from vista.consola.interfaz_consola import InterfazConsola
 
 class Menu:
 
-    def __init__(self, interfaz, instrucciones):
+    def __init__(self, interfaz: InterfazConsola, instrucciones: str) -> None:
         """
         Inicializa un menú con opciones para que el usuario interactúe
 

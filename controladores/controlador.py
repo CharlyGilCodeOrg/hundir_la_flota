@@ -1,5 +1,3 @@
-from dominio.resultado import ResultadoDisparo
-from config.mensajes import TRADUCCION
 from abc import ABC, abstractmethod
 
 class Controlador(ABC):
@@ -14,5 +12,3 @@ class Controlador(ABC):
         pass
     
     
-    def adaptar_resultado_a_string(self, resultado: ResultadoDisparo) -> str:
-        return TRADUCCION[resultado]

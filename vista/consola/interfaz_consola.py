@@ -1,12 +1,12 @@
-"""
-Interfaz de consola del juego Hundir la Flota.
-"""
+from utils.utils import Util
 from utils.excepciones import VolverAlMenu
 import os
+from dominio.resultado import ResultadoDisparo
+from config.mensajes import TRADUCCION
 
 class InterfazConsola:
 
-    def __init__(self, textos, validador):
+    def __init__(self, textos: dict, validador: Util) -> None:
         """
         :param textos: Diccionario de textos del juego.
         :type textos: dict
@@ -15,9 +15,22 @@ class InterfazConsola:
         """
         self._textos = textos
         self._validador = validador
+        
+    
+    def adaptar_resultado_a_string(self, resultado: ResultadoDisparo) -> str:
+        """
+        Convierte el enum a str.
+
+        Args:
+            resultado (ResultadoDisparo): Objeto de la clase ResultadoDisparo que representa un resultado.
+
+        Returns:
+            str: Cadena resultado.
+        """
+        return TRADUCCION[resultado]
     
 
-    def pedir_disparo(self, ancho, alto):
+    def pedir_disparo(self, ancho: int, alto: int) -> tuple[int, int]:
         """
         Solicita al usuario las coordenadas del disparo.
         Permite escribir 'salir' para terminar el juego.
@@ -26,7 +39,7 @@ class InterfazConsola:
         :type ancho: int
         :param alto: Alto del tablero.
         :type alto: int
-        :return: El valor para X e Y introducido por el usuario
+        :return: El valor para X e Y introducido por el usuario.
         :rtype: tuple[int, int]
         """
         x = self._pedir_coordenada("x", ancho - 1)
@@ -34,7 +47,7 @@ class InterfazConsola:
         return x, y
 
 
-    def _pedir_coordenada(self, eje, limite):
+    def _pedir_coordenada(self, eje: str, limite: int) -> int:
         """
         Solicita una coordenada válida al usuario.
         'Salir' es el valor establecido para terminar el programa.
@@ -69,7 +82,7 @@ class InterfazConsola:
             return int(valor)
 
 
-    def opcion_volver_menu(self):
+    def opcion_volver_menu(self) -> None:
         """
         Muestra el texto con la opción para volver al menú.
         """
@@ -78,7 +91,7 @@ class InterfazConsola:
         print("")
 
 
-    def fin_programa(self):
+    def fin_programa(self) -> None:
         """
         Muestra el texto de fin de programa.
         """
@@ -87,19 +100,20 @@ class InterfazConsola:
         print("")
 
 
-    def mostrar_resultado(self, resultado):
+    def mostrar_resultado(self, ResultadoDisparo: ResultadoDisparo) -> None:
         """
         Muestra el resultado del disparo.
 
-        :param resultado: Resultado del disparo.
-        :type resultado: str
+        :param ResultadoDisparo: Resultado del disparo.
+        :type ResultadoDisparo: ResultadoDisparo
         """
         print("")
+        resultado = self.adaptar_resultado_a_string(ResultadoDisparo)
         print(self._textos[f"TEXTO_{resultado}"])
         print("")
 
 
-    def mostrar_tablero(self, tablero):
+    def mostrar_tablero(self, tablero: list) -> None:
         """
         Muestra por consola el tablero de juego con índices de filas y columnas.
 
@@ -125,7 +139,7 @@ class InterfazConsola:
             print(fila_str)
 
 
-    def mostrar_balas(self, restantes):
+    def mostrar_balas(self, restantes: int) -> None:
         """
         Muestra las balas restantes.
 
@@ -135,7 +149,7 @@ class InterfazConsola:
         print(self._textos["TEXTO_BALAS_RESTANTES"], restantes)
 
 
-    def mostrar_mensaje_final(self, victoria):
+    def mostrar_mensaje_final(self, victoria: bool) -> None:
         """
         Muestra el mensaje final del juego.
 
@@ -152,7 +166,7 @@ class InterfazConsola:
         input(self._textos["PULSAR_ENTER"])
 
 
-    def borrar_consola(self):
+    def borrar_consola(self) -> None:
         """
         Borra lo escrito en la consola.
         """
@@ -162,7 +176,7 @@ class InterfazConsola:
         os.system('cls' if os.name == 'nt' else 'clear')
 
 
-    def mostrar_instrucciones(self, instrucciones):
+    def mostrar_instrucciones(self, instrucciones: str) -> None:
         """
         Muestra las instrucciones del juego.
 
@@ -175,7 +189,7 @@ class InterfazConsola:
         self.borrar_consola()
 
 
-    def obtener_texto(self, clave):
+    def obtener_texto(self, clave: str) -> str:
         """
         Devuelve el texto correspondiente a la clave.
 
@@ -187,7 +201,7 @@ class InterfazConsola:
         return self._textos.get(clave, f"[Texto no encontrado: {clave}]")
 
 
-    def mostrar_turno_jugador(self, jugador):
+    def mostrar_turno_jugador(self, jugador: int) -> None:
         """
         Muestra el turno del jugador actual.
 
@@ -198,7 +212,7 @@ class InterfazConsola:
         print(self._textos["TEXTO_TURNO"].format(jugador))
         
         
-    def mostrar_mensaje(self, mensaje):
+    def mostrar_mensaje(self, mensaje: str) -> None:
         """
         Muestra el mensaje introducido como parámetro.
 

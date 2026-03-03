@@ -1,8 +1,9 @@
 import random
+from typing import Optional
 
 class Barco:
 
-    def __init__(self, nombre,  tamanyo, caracter, horizontal = None):
+    def __init__(self, nombre: str,  tamanyo: int, caracter: str, horizontal: Optional[bool] = None) -> None:
         """
         Inicializa un barco con un tamaño y una orientación aleatoria.
         La vida restante es igual al tamaño y se va reduciendo en 1
@@ -27,7 +28,7 @@ class Barco:
             self._horizontal = self.set_horizontal()
 
 
-    def set_horizontal(self, horizontal = None):
+    def set_horizontal(self, horizontal: bool = None) -> None:
         """
         Determina si la orientación del barco es horizontal o vertical.
         Para el pve lo determina aleatoriamente y para pvp el jugador lo elige introduciendo parámetro.
@@ -41,7 +42,7 @@ class Barco:
             self._horizontal = random.choice([True, False])
         
     
-    def get_horizontal(self):
+    def get_horizontal(self) -> bool:
         """
         Getter del atributo _horizontal
 
@@ -51,7 +52,7 @@ class Barco:
         return self._horizontal
     
 
-    def calcular_maximo(self, alto_o_ancho):
+    def calcular_maximo(self, alto_o_ancho: int) -> int:
         """
         Calcula el límite máximo para colocar un barco en un eje determinado.
 
@@ -63,14 +64,14 @@ class Barco:
         return alto_o_ancho - self.tamanyo
     
 
-    def recibir_impacto(self):
+    def recibir_impacto(self) -> None:
         """
         Resta un punto de vida al barco.
         """
         self._vida_restante -= 1
 
 
-    def hundido(self):
+    def hundido(self) -> bool:
         """
         Comprueba si el barco ha sido hundido (vida restante es igual a 0).
         

@@ -10,17 +10,17 @@ from controladores.controlador_pve import ControladorPVE
 
 class App:
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Inicializa la aplicación.
         """
         validador = Util()
         self._interfaz = InterfazConsola(TEXTOS, validador)
         self._menu = Menu(self._interfaz, INSTRUCCIONES)
-        self.controlador_pve = ControladorPVE()
+        self.controlador_pve = ControladorPVE(self._interfaz, self._menu)
 
 
-    def ejecutar(self):
+    def ejecutar(self) -> None:
         """
         Inicia la ejecución de la aplicación.
         """
@@ -37,7 +37,7 @@ class App:
             self._interfaz.fin_programa()
             
             
-    def _iniciar_cliente_pvp(self):
+    def _iniciar_cliente_pvp(self) -> None:
         """
         Inicia el cliente para partida PvP.
         """

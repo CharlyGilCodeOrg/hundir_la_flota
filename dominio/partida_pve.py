@@ -1,9 +1,10 @@
 from dominio.partida_base import PartidaBase
 from dominio.resultado import ResultadoDisparo
+from dominio.tablero import Tablero
 
 class PartidaPVE(PartidaBase):
 
-    def __init__(self, tablero_usuario, tablero_maquina, disparos_maximos, caracter_vacio, caracter_tocado, caracter_agua):
+    def __init__(self, tablero_usuario: Tablero, tablero_maquina: Tablero, disparos_maximos: int, caracter_vacio: str, caracter_tocado: str, caracter_agua: str):
         """
         Inicializa una nueva partida PVE.
 
@@ -33,7 +34,7 @@ class PartidaPVE(PartidaBase):
             self.tablero_maquina.generar_barcos(barco)
 
         
-    def disparar(self, x, y):
+    def disparar(self, x: int, y: int) -> ResultadoDisparo:
         """
         Realiza un disparo sobre los tableros.
 
@@ -52,7 +53,7 @@ class PartidaPVE(PartidaBase):
         return resultado
 
 
-    def quedan_disparos(self):
+    def quedan_disparos(self) -> bool:
         """
         Indica si aún quedan disparos disponibles.
 
@@ -62,7 +63,7 @@ class PartidaPVE(PartidaBase):
         return self._disparos_realizados < self._disparos_maximos
 
 
-    def hay_victoria(self):
+    def hay_victoria(self) -> bool:
         """
         Comprueba si quedan barcos en el tablero interno.
 
@@ -72,7 +73,7 @@ class PartidaPVE(PartidaBase):
         return self.tablero_maquina.todos_hundidos()
 
 
-    def disparos_restantes(self):
+    def disparos_restantes(self) -> int:
         """
         Calcula las balas restantes
 
@@ -82,5 +83,11 @@ class PartidaPVE(PartidaBase):
         return self._disparos_maximos - self._disparos_realizados
     
     
-    def obtener_dimensiones_tablero(self):
+    def obtener_dimensiones_tablero(self) -> tuple[int, int]:
+        """
+        Devuelve las dimensiones del tablero.
+
+        Returns:
+            tuple[int, int]: Ancho y alto del tablero.
+        """
         return self.tablero_maquina.ancho, self.tablero_maquina.alto
