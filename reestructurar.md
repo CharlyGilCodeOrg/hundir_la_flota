@@ -1,10 +1,11 @@
 app/
-    main.py
+   app.py 
 
 config/
-    configuracion.py
+    constantes.py
+    mensajes.py
 
-dominio/
+modelo/
     barco.py
     tablero.py
     partida_base.py
@@ -12,19 +13,22 @@ dominio/
     partida_pvp.py
     resultado.py
 
-aplicacion/
+controlador/
+    controlador.py
     controlador_pve.py
     controlador_pvp.py
 
-infraestructura/
-    red/
-        servidor.py
-        cliente.py
-        protocolo.py
+red/
+    servidor.py
+    cliente.py
+    protocolo.py
 
 vista/
     consola/
         vista_pve.py
+        menu_pve.py
         vista_pvp.py
 
 utils/
+
+main.py
