@@ -1,8 +1,8 @@
-from modelo.partida_base import PartidaBase
+from modelo.partida import Partida
 from modelo.resultado import ResultadoDisparo
 from modelo.tablero import Tablero
 
-class PartidaPVE(PartidaBase):
+class PartidaPVE(Partida):
 
     def __init__(self, tablero_usuario: Tablero, tablero_maquina: Tablero, disparos_maximos: int) -> None:
         """

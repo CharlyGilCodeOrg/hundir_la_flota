@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class PartidaBase(ABC):
+class Partida(ABC):
 
     @abstractmethod
     def disparar(self, jugador, x, y):

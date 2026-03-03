@@ -1,7 +1,7 @@
-from modelo.partida_base import PartidaBase
+from modelo.partida import Partida
 from modelo.resultado import ResultadoDisparo
 
-class PartidaPVP(PartidaBase):
+class PartidaPVP(Partida):
 
     def disparar(self, jugador, x, y):
         tablero_objetivo = self.obtener_tablero_rival(jugador)
