@@ -62,7 +62,7 @@ class InterfazConsola:
         """
         valido = False
         while not valido:
-            valor = input(self._textos[f"TEXTO_POSICION_{eje.upper()}"])
+            valor = input(self._textos[f"POSICION_{eje.upper()}"])
             print("")
 
             if valor.lower() == "salir":
@@ -87,7 +87,7 @@ class InterfazConsola:
         Muestra el texto con la opción para volver al menú.
         """
         print("")
-        print(self._textos["TEXTO_FIN_JUEGO"])
+        print(self._textos["FIN_JUEGO"])
         print("")
 
 
@@ -109,7 +109,7 @@ class InterfazConsola:
         """
         print("")
         resultado = self.adaptar_resultado_a_string(resultado_enum)
-        print(self._textos[f"TEXTO_{resultado}"])
+        print(self._textos[f"{resultado}"])
         print("")
 
 
@@ -146,7 +146,7 @@ class InterfazConsola:
         :param restantes: Número de disparos restantes.
         :type restantes: int
         """
-        print(self._textos["TEXTO_BALAS_RESTANTES"], restantes)
+        print(self._textos["BALAS_RESTANTES"], restantes)
 
 
     def mostrar_mensaje_final(self, victoria: bool) -> None:
@@ -158,10 +158,10 @@ class InterfazConsola:
         """
         if victoria:
             print("")
-            print(self._textos["TEXTO_VICTORIA"])
+            print(self._textos["VICTORIA"])
         else:
             print("")
-            print(self._textos["TEXTO_DERROTA"])
+            print(self._textos["DERROTA"])
 
         input(self._textos["PULSAR_ENTER"])
 
@@ -209,7 +209,7 @@ class InterfazConsola:
         :type jugador: int
         """
         print("")
-        print(self._textos["TEXTO_TURNO"].format(jugador))
+        print(self._textos["TURNO"].format(jugador))
         
         
     def mostrar_mensaje(self, mensaje: str) -> None:

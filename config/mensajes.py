@@ -9,26 +9,26 @@ TRADUCCION = {
 }
 
 TEXTOS = {
-    "TEXTO_TURNO": "TURNO DEL JUGADOR {}",
+    "TURNO": "TURNO DEL JUGADOR {}",
     
     # Inputs
-    "TEXTO_POSICION_X": "Introduzca la coordenada x: ",
-    "TEXTO_POSICION_Y": "Introduzca la coordenada y: ",
+    "POSICION_X": "Introduzca la coordenada x: ",
+    "POSICION_Y": "Introduzca la coordenada y: ",
     "PULSAR_ENTER" : "\nPulsa Enter para continuar...",
 
     # Disparos
-    "TEXTO_TOCADO_Y_HUNDIDO": "TOCADO Y HUNDIDO",
-    "TEXTO_TOCADO": "TOCADO",
-    "TEXTO_AGUA": "AGUA",
-    "TEXTO_REPETIDO": "YA HABÍAS DISPARADO EN ESTE HUECO. NO PIERDES LA BALA.",
-    "TEXTO_BALAS_RESTANTES": "BALAS RESTANTES: ",
+    "TOCADO_Y_HUNDIDO": "TOCADO Y HUNDIDO",
+    "TOCADO": "TOCADO",
+    "AGUA": "AGUA",
+    "REPETIDO": "YA HABÍAS DISPARADO EN ESTE HUECO. NO PIERDES LA BALA.",
+    "BALAS_RESTANTES": "BALAS RESTANTES: ",
 
     # Final
-    "TEXTO_VICTORIA": "TE HAS CARGADO TODOS LOS BARCOS, ENHORABUENA.",
-    "TEXTO_DERROTA": "LÁSTIMA, TE HAS QUEDADO SIN BALAS. AFINA TU PUNTERÍA Y VUELVE A INTENTARLO.",
+    "VICTORIA": "TE HAS CARGADO TODOS LOS BARCOS, ENHORABUENA.",
+    "DERROTA": "LÁSTIMA, TE HAS QUEDADO SIN BALAS. AFINA TU PUNTERÍA Y VUELVE A INTENTARLO.",
     
     # Terminar programa
-    "TEXTO_FIN_JUEGO" : "Escriba 'Salir' para volver al menú.",
+    "FIN_JUEGO" : "Escriba 'Salir' para volver al menú.",
     "FIN_DE_PROGRAMA" : "FIN DE PROGRAMA",
 
     # Errores
