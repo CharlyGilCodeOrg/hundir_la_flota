@@ -33,15 +33,6 @@ class ControladorPVE(Controlador):
             for nombre, longitud, identificador in config_dificultad["barcos"]
         ]
 
-        tablero_usuario = Tablero(
-            config_dificultad["ancho"],
-            config_dificultad["alto"],
-            barcos,
-            caracteres["CARACTER_VACIO"],
-            caracteres["CARACTER_TOCADO"],
-            caracteres["CARACTER_AGUA"]
-        )
-
         tablero_maquina = Tablero(
             config_dificultad["ancho"],
             config_dificultad["alto"],
@@ -52,7 +43,6 @@ class ControladorPVE(Controlador):
         )
 
         return PartidaPVE(
-            tablero_usuario,
             tablero_maquina,
             config_dificultad["disparos"]
         )

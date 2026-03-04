@@ -1,5 +1,6 @@
 from modelo.partida.partida import Partida
 from modelo.tablero import Tablero
+from modelo.barco import Barco
 from modelo.resultado import ResultadoDisparo
 from enum import Enum
 
@@ -41,9 +42,18 @@ class PartidaPVP(Partida):
             self._turno = defensor
 
         return resultado
+    
+    
+    def obtener_tablero_propio(self, jugador: int) -> list:
+        return self._tableros[jugador].ver_tablero()
 
 
-    def colocar_barco(self, jugador: int, barco, x: int, y: int, horizontal: bool) -> bool:
+    def obtener_tablero_rival(self, jugador: int) -> list:
+        rival = self._oponente(jugador)
+        return self._tableros[rival].ver_tablero_rival()
+    
+    
+    def colocar_barco(self, barco :Barco, x: int, y: int, horizontal: bool, jugador: int) -> bool:
         if self._estado != EstadoPartida.COLOCACION:
             raise ValueError("La fase de colocación ha terminado")
 
@@ -60,6 +70,10 @@ class PartidaPVP(Partida):
                     self._turno = 1
 
         return colocado
+    
+    
+    def hay_victoria(self) -> bool:
+        return self._estado == EstadoPartida.FINALIZADA
 
 
     def estado(self) -> EstadoPartida:
@@ -68,19 +82,6 @@ class PartidaPVP(Partida):
 
     def turno_actual(self) -> int:
         return self._turno
-
-
-    def obtener_tablero_propio(self, jugador: int) -> list:
-        return self._tableros[jugador].ver_tablero()
-
-
-    def obtener_tablero_rival(self, jugador: int) -> list:
-        rival = self._oponente(jugador)
-        return self._tableros[rival].ver_tablero_rival()
-    
-    
-    def hay_victoria(self) -> bool:
-        return self._estado == EstadoPartida.FINALIZADA
     
     
     def jugador_ganador(self) -> int | None:

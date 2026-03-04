@@ -95,15 +95,17 @@ class Tablero:
         self.__casillas[y][x] = caracter
     
 
-    def generar_barcos(self, barco: Barco) -> None:
+    def colocar_barco_aleatorio(self, barco: Barco) -> bool:
         """
-        Genera y coloca barcos aleatoriamente en el tablero.
+        Coloca un barco aleatoriamente en el tablero.
 
         El proceso se repite hasta introducir el barco,
         comprobando que no se solapen entre sí.
 
         :param barco: Barco que se va a colocar en el tablero.
         :type barco: Barco
+        :return colocado: True si se ha podido colocar y False si no.
+        :rtype colocado: bool
         """
         intentos_maximos = 1000
         intentos = 0
@@ -120,12 +122,11 @@ class Tablero:
             posicion_y = random.randint(0, max_y)
 
             if self._puede_colocarse(barco, posicion_x, posicion_y):
-                self._rellenar_tablero(barco, posicion_x, posicion_y)
+                self._introducir_barco_en_tablero(barco, posicion_x, posicion_y)
                 colocado = True
                 self._barcos_colocados += 1
             
-        if not colocado:
-            raise RuntimeError(f"No se pudo colocar el barco {barco.nombre} después de {intentos_maximos} intentos")
+        return colocado
         
         
     def colocar_barco_manual(self, barco: Barco, x: int, y: int) -> bool:
@@ -144,12 +145,12 @@ class Tablero:
         if not self._puede_colocarse(barco, x, y):
             return False
 
-        self._rellenar_tablero(barco, x, y)
+        self._introducir_barco_en_tablero(barco, x, y)
         self._barcos_colocados += 1
         return True
 
 
-    def _rellenar_tablero(self, barco: Barco, x: int, y: int) -> None:
+    def _introducir_barco_en_tablero(self, barco: Barco, x: int, y: int) -> None:
         """
         Introduce un barco en el tablero según la orientación indicada.
 
