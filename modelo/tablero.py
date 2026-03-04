@@ -27,6 +27,7 @@ class Tablero:
         self._caracter_vacio = caracter_vacio
         self._caracter_tocado = caracter_tocado
         self._caracter_agua = caracter_agua
+        self._barcos_colocados = 0
         
         self.__casillas = [
             [None for _ in range(ancho)]
@@ -121,6 +122,7 @@ class Tablero:
             if self._puede_colocarse(barco, posicion_x, posicion_y):
                 self._rellenar_tablero(barco, posicion_x, posicion_y)
                 colocado = True
+                self._barcos_colocados += 1
             
         if not colocado:
             raise RuntimeError(f"No se pudo colocar el barco {barco.nombre} después de {intentos_maximos} intentos")
@@ -143,6 +145,7 @@ class Tablero:
             return False
 
         self._rellenar_tablero(barco, x, y)
+        self._barcos_colocados += 1
         return True
 
 
@@ -270,3 +273,13 @@ class Tablero:
                 return False
 
         return True
+    
+    
+    def todos_colocados(self) -> bool:
+        """
+        Comprueba si todos los barcos han sido colocados.
+
+        Returns:
+            bool: True si todos han sido colocados y False si no
+        """
+        return self._barcos_colocados == len(self.barcos)

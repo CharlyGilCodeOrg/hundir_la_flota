@@ -9,3 +9,7 @@ class Partida(ABC):
     @abstractmethod
     def hay_victoria(self):
         pass
+
+# Falta método obtener_tablero_propio
+# Falta método obtener_tablero_rival
+# Falta método colocar_barco?

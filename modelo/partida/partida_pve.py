@@ -92,3 +92,7 @@ class PartidaPVE(Partida):
             list: Array que representa el tablero.
         """
         return self.tablero_usuario.ver_tablero_rival()
+    
+# Falta método obtener_tablero_propio
+# Falta método obtener_tablero_rival
+# Falta método colocar_barco?

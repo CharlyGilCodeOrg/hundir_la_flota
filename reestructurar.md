@@ -24,6 +24,8 @@ controlador/
 red/
     servidor.py
     cliente.py
+    partida.py
+    globales.py
 
 vista/
     consola/
