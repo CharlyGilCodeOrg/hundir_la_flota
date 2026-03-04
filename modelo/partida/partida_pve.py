@@ -112,6 +112,12 @@ class PartidaPVE(Partida):
     
     
     def _colocar_barcos_automaticamente(self):
+        """
+        Coloca los barcos automáticamente en el tablero.
+
+        Raises:
+            RuntimeError: En caso de que un barco no se pueda colocar.
+        """
         for barco in self.tablero_maquina.barcos:
             colocado = self.colocar_barco(barco)            
             if not colocado:

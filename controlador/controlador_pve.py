@@ -26,7 +26,17 @@ class ControladorPVE(Controlador):
         self._partida = self._crear_partida(dificultad)
         self._ejecutar_bucle_principal()
 
+
     def _crear_partida(self, dificultad: int) -> PartidaPVE:
+        """
+        Crea la partida pve.
+
+        Args:
+            dificultad (int): Índice de la dificultad.
+
+        Returns:
+            PartidaPVE: Objeto PartidaPVE.
+        """
         config_dificultad = self._config["DIFICULTAD"]["PVE"][dificultad]
         caracteres = self._config["CARACTERES"]
 
@@ -48,9 +58,9 @@ class ControladorPVE(Controlador):
 
 
     def _ejecutar_bucle_principal(self) -> None:
-        if self._partida is None:
-            raise RuntimeError("No hay partida iniciada")
-
+        """
+        Ejecuta el bucle principal de la partida pve.
+        """
         try:
             self._vista.borrar_consola()
 
@@ -67,7 +77,16 @@ class ControladorPVE(Controlador):
             self._vista.borrar_consola()
             
             
-    def _crear_barcos(self, config_barcos: list) -> list:
+    def _crear_barcos(self, config_barcos: list) -> list[Barco]:
+        """
+        Crea los objetos Barco.
+
+        Args:
+            config_barcos (list): Lista de barcos.
+
+        Returns:
+            list[Barco]: Lista de objetos Barco.
+        """
         return [
             Barco(nombre, tamanyo, caracter)
             for nombre, tamanyo, caracter in config_barcos
@@ -75,6 +94,9 @@ class ControladorPVE(Controlador):
         
     
     def _mostrar_estado(self) -> None:
+        """
+        Muestra tablero y disparos restantes.
+        """
         self._vista.mostrar_tablero(
             self._partida.obtener_tablero_rival()
         )
@@ -84,6 +106,9 @@ class ControladorPVE(Controlador):
         
     
     def _fase_turno(self) -> None:
+        """
+        Lógica de cada turno.
+        """
         ancho, alto = self._partida.obtener_dimensiones_tablero()
         self._vista.opcion_volver_menu()
         x, y = self._vista.pedir_disparo(ancho, alto)

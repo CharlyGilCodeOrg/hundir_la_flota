@@ -33,8 +33,7 @@ class App:
                     self.controlador_pve.iniciar_partida(dificultad)
                 elif opcion == 4:
                     self._iniciar_cliente_pvp()
-                    # próximamente partida_pvp = self.controlador_pvp.crear_partida()
-                    # próximamente self.controlador_pvp(ejecutar_partida(partida_pvp))
+                    # próximamente self.controlador_pvp.iniciar_partida(dificultad)
         except SalirDelPrograma:
             self._interfaz.fin_programa()
             
