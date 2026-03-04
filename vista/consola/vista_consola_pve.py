@@ -1,10 +1,10 @@
 from utils.utils import Util
 from utils.excepciones import VolverAlMenu
-import os
 from modelo.resultado import ResultadoDisparo
-from config.mensajes import TRADUCCION
+from vista.consola.vista_consola import VistaConsola
+import os
 
-class InterfazConsola:
+class VistaConsolaPVE(VistaConsola):
 
     def __init__(self, textos: dict, validador: Util) -> None:
         """
@@ -15,20 +15,7 @@ class InterfazConsola:
         """
         self._textos = textos
         self._validador = validador
-        
-    
-    def adaptar_resultado_a_string(self, resultado: ResultadoDisparo) -> str:
-        """
-        Convierte el enum a str.
 
-        Args:
-            resultado (ResultadoDisparo): Objeto de la clase ResultadoDisparo que representa un resultado.
-
-        Returns:
-            str: Cadena resultado.
-        """
-        return TRADUCCION[resultado]
-    
 
     def pedir_disparo(self, ancho: int, alto: int) -> tuple[int, int]:
         """
@@ -80,6 +67,16 @@ class InterfazConsola:
             
             valido = True
             return int(valor)
+        
+    
+    def borrar_consola(self) -> None:
+        """
+        Borra lo escrito en la consola.
+        """
+        # \033[2J → limpia toda la pantalla
+        # \033[H → mueve el cursor a la posición (0,0)
+        print("\033[2J\033[H", end="")
+        os.system('cls' if os.name == 'nt' else 'clear')
 
 
     def opcion_volver_menu(self) -> None:
@@ -88,15 +85,6 @@ class InterfazConsola:
         """
         print("")
         print(self._textos["FIN_JUEGO"])
-        print("")
-
-
-    def fin_programa(self) -> None:
-        """
-        Muestra el texto de fin de programa.
-        """
-        print("")
-        print(self._textos["FIN_DE_PROGRAMA"])
         print("")
 
 
@@ -137,18 +125,8 @@ class InterfazConsola:
             fila = tablero[i]
             fila_str = f"{i:<2} " + " ".join(fila)
             print(fila_str)
-
-
-    def mostrar_balas(self, restantes: int) -> None:
-        """
-        Muestra las balas restantes.
-
-        :param restantes: Número de disparos restantes.
-        :type restantes: int
-        """
-        print(self._textos["BALAS_RESTANTES"], restantes)
-
-
+        
+    
     def mostrar_mensaje_final(self, victoria: bool) -> None:
         """
         Muestra el mensaje final del juego.
@@ -166,14 +144,46 @@ class InterfazConsola:
         input(self._textos["PULSAR_ENTER"])
 
 
-    def borrar_consola(self) -> None:
+    def fin_programa(self) -> None:
         """
-        Borra lo escrito en la consola.
+        Muestra el texto de fin de programa.
         """
-        # \033[2J → limpia toda la pantalla
-        # \033[H → mueve el cursor a la posición (0,0)
-        print("\033[2J\033[H", end="")
-        os.system('cls' if os.name == 'nt' else 'clear')
+        print("")
+        print(self._textos["FIN_DE_PROGRAMA"])
+        print("")
+
+
+    def mostrar_balas(self, restantes: int) -> None:
+        """
+        Muestra las balas restantes.
+
+        :param restantes: Número de disparos restantes.
+        :type restantes: int
+        """
+        print(self._textos["BALAS_RESTANTES"], restantes)
+        
+        
+    def obtener_texto(self, clave: str) -> str:
+        """
+        Devuelve el texto correspondiente a la clave.
+
+        :param clave: Clave del texto.
+        :type clave: str
+        :return: Texto asociado.
+        :rtype: str
+        """
+        return self._textos.get(clave, f"[Texto no encontrado: {clave}]")
+    
+    
+    def mostrar_mensaje(self, mensaje: str) -> None:
+        """
+        Muestra el mensaje introducido como parámetro.
+
+        :param mensaje: Mensaje a mostrar.
+        :type mensaje: str
+        """
+        print("")
+        print(mensaje)
 
 
     def mostrar_instrucciones(self, instrucciones: str) -> None:
@@ -189,35 +199,12 @@ class InterfazConsola:
         self.borrar_consola()
 
 
-    def obtener_texto(self, clave: str) -> str:
-        """
-        Devuelve el texto correspondiente a la clave.
+    # def mostrar_turno_jugador(self, jugador: int) -> None:
+    #     """
+    #     Muestra el turno del jugador actual.
 
-        :param clave: Clave del texto.
-        :type clave: str
-        :return: Texto asociado.
-        :rtype: str
-        """
-        return self._textos.get(clave, f"[Texto no encontrado: {clave}]")
-
-
-    def mostrar_turno_jugador(self, jugador: int) -> None:
-        """
-        Muestra el turno del jugador actual.
-
-        :param jugador: Número del jugador actual.
-        :type jugador: int
-        """
-        print("")
-        print(self._textos["TURNO"].format(jugador))
-        
-        
-    def mostrar_mensaje(self, mensaje: str) -> None:
-        """
-        Muestra el mensaje introducido como parámetro.
-
-        :param mensaje: Mensaje a mostrar.
-        :type mensaje: str
-        """
-        print("")
-        print(mensaje)
+    #     :param jugador: Número del jugador actual.
+    #     :type jugador: int
+    #     """
+    #     print("")
+    #     print(self._textos["TURNO"].format(jugador))

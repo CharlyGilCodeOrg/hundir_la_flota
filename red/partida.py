@@ -2,8 +2,8 @@ import asyncio
 from red.globales import enviar, jugador_partida
 from modelo.tablero import Tablero
 from modelo.barco import Barco
-from config.constantes import CONSTANTES
 from modelo.resultado import ResultadoDisparo
+from config.constantes import CONSTANTES
 from config.mensajes import TRADUCCION
 
 class Partida:
@@ -306,7 +306,7 @@ class Partida:
         return TRADUCCION[resultado]
     
     
-    def disparar(self, x: int, y: int, tablero_defensor) -> ResultadoDisparo:
+    def disparar(self, x: int, y: int, tablero_defensor: Tablero) -> ResultadoDisparo:
         """
         Realiza un disparo sobre los tableros.
 
@@ -315,6 +315,8 @@ class Partida:
         :param y: Coordenada Y.
         :type y: int
         :return: Resultado del disparo.
+        :param tablero_defensor: Tablero de la persona atacada.
+        :type tablero_defensor: Tablero
         :rtype: ResultadoDisparo
         """
         [resultado, caracter] = tablero_defensor.recibir_disparo(x, y)

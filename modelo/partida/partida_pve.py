@@ -1,4 +1,4 @@
-from modelo.partida import Partida
+from modelo.partida.partida import Partida
 from modelo.resultado import ResultadoDisparo
 from modelo.tablero import Tablero
 

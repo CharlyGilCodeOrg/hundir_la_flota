@@ -1,15 +1,15 @@
 from utils.excepciones import SalirDelPrograma
-from vista.consola.vista_pve import InterfazConsola
+from vista.consola.vista_consola_pve import VistaConsola
 from config.constantes import CONSTANTES
 
 class Menu:
 
-    def __init__(self, interfaz: InterfazConsola, instrucciones: str) -> None:
+    def __init__(self, interfaz: VistaConsola, instrucciones: str) -> None:
         """
         Inicializa un menú con opciones para que el usuario interactúe
 
-        :param interfaz: Objeto de la clase InterfazConsola.
-        :type interfaz: InterfazConsola
+        :param interfaz: Objeto de la clase VistaConsola.
+        :type interfaz: VistaConsola
         :param instrucciones: Instrucciones del juego.
         :type instrucciones: str
         """
