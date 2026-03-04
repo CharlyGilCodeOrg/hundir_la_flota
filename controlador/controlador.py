@@ -10,5 +10,3 @@ class Controlador(ABC):
     @abstractmethod
     def ejecutar_partida(self):
         pass
-    
-    
