@@ -4,8 +4,8 @@ from modelo.barco import Barco
 from vista.consola.vista_pve import InterfazConsola
 from vista.consola.menu_pve import Menu
 from utils.excepciones import VolverAlMenu
-import config.constantes as constante
 from controlador.controlador import Controlador
+from config.constantes import CONSTANTES
 
 class ControladorPVE(Controlador):
     def __init__(self, interfaz: InterfazConsola, menu: Menu) -> None:
@@ -20,40 +20,41 @@ class ControladorPVE(Controlador):
         """
         Crea e inicializa una nueva partida pve.
 
-        :param dificultad: Índice para la dificultad
+        :param dificultad: Índice para la dificultad.
         :type dificultad: int
         :return: Objeto PartidaPVE inicializado.
         :rtype: PartidaPVE
         """
-        config = constante.DIFICULTAD["PVE"][dificultad]
+        config_dificultad = CONSTANTES["DIFICULTAD"]["PVE"][dificultad]
+        caracteres = CONSTANTES["CARACTERES"]
 
         barcos = [
             Barco(nombre, longitud, identificador)
-            for nombre, longitud, identificador in config["barcos"]
+            for nombre, longitud, identificador in config_dificultad["barcos"]
         ]
 
         tablero_usuario = Tablero(
-            config["ancho"],
-            config["alto"],
+            config_dificultad["ancho"],
+            config_dificultad["alto"],
             barcos,
-            constante.CARACTER_VACIO,
-            constante.CARACTER_TOCADO,
-            constante.CARACTER_AGUA
+            caracteres["CARACTER_VACIO"],
+            caracteres["CARACTER_TOCADO"],
+            caracteres["CARACTER_AGUA"]
         )
 
         tablero_maquina = Tablero(
-            config["ancho"],
-            config["alto"],
+            config_dificultad["ancho"],
+            config_dificultad["alto"],
             barcos,
-            constante.CARACTER_VACIO,
-            constante.CARACTER_TOCADO,
-            constante.CARACTER_AGUA
+            caracteres["CARACTER_VACIO"],
+            caracteres["CARACTER_TOCADO"],
+            caracteres["CARACTER_AGUA"]
         )
 
         return PartidaPVE(
             tablero_usuario,
             tablero_maquina,
-            config["disparos"]
+            config_dificultad["disparos"]
         )
 
 

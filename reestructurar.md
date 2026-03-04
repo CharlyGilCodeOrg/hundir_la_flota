@@ -8,7 +8,7 @@ config/
 modelo/
     barco.py
     tablero.py
-    partida_base.py
+    partida.py
     partida_pve.py
     partida_pvp.py
     resultado.py
@@ -21,7 +21,6 @@ controlador/
 red/
     servidor.py
     cliente.py
-    protocolo.py
 
 vista/
     consola/

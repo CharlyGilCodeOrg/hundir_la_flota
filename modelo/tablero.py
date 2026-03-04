@@ -170,7 +170,7 @@ class Tablero:
                 y = y + 1
 
 
-    def recibir_disparo(self, x: int, y: int) -> ResultadoDisparo:
+    def recibir_disparo(self, x: int, y: int) -> tuple[ResultadoDisparo, str]:
         """
         Realiza un disparo sobre el tablero.
 
@@ -178,11 +178,11 @@ class Tablero:
         :type x: int
         :param y: Coordenada Y.
         :type y: int
-        :return: Resultado del disparo.
-        :rtype: ResultadoDisparo
+        :return: Resultado del disparo y contenido de la celda.
+        :rtype: tuple[ResultadoDisparo, str]
         """
         if not self._coordenadas_validas(x, y):
-            return [ResultadoDisparo.INVALIDO, celda]
+            return [ResultadoDisparo.INVALIDO, ""]
 
         celda = self.__casillas[y][x]
 

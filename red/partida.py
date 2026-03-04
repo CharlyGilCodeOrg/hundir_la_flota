@@ -2,16 +2,21 @@ import asyncio
 from red.globales import enviar, jugador_partida
 from modelo.tablero import Tablero
 from modelo.barco import Barco
-from config.constantes import CARACTER_AGUA, CARACTER_VACIO, CARACTER_TOCADO, DIFICULTAD
+from config.constantes import CONSTANTES
+from modelo.resultado import ResultadoDisparo
+from config.mensajes import TRADUCCION
 
 class Partida:
 
     ESPERANDO_COLOCACION = "esperando_colocacion"
     JUGANDO = "jugando"
     FINALIZADA = "finalizada"
-    ANCHO_TABLEROS = DIFICULTAD["PVP"]["ancho"]
-    ALTO_TABLEROS = DIFICULTAD["PVP"]["alto"]
-    DICT_DE_BARCOS = DIFICULTAD["PVP"]["barcos"]
+    ANCHO_TABLEROS = CONSTANTES["DIFICULTAD"]["PVP"]["ancho"]
+    ALTO_TABLEROS = CONSTANTES["DIFICULTAD"]["PVP"]["alto"]
+    DICT_DE_BARCOS = CONSTANTES["DIFICULTAD"]["PVP"]["barcos"]
+    CARACTER_VACIO = CONSTANTES["CARACTERES"]["CARACTER_VACIO"]
+    CARACTER_TOCADO = CONSTANTES["CARACTERES"]["CARACTER_TOCADO"]
+    CARACTER_AGUA = CONSTANTES["CARACTERES"]["CARACTER_AGUA"]
 
     def __init__(self, jugador1, jugador2):
         self.jugador1 = jugador1
@@ -22,8 +27,8 @@ class Partida:
         barcos_j2 = self.crear_barcos()
         
         self.tableros = {
-            self.jugador1: Tablero(self.ANCHO_TABLEROS, self.ALTO_TABLEROS, barcos_j1, CARACTER_VACIO, CARACTER_TOCADO, CARACTER_AGUA),
-            self.jugador2: Tablero(self.ANCHO_TABLEROS, self.ALTO_TABLEROS, barcos_j2, CARACTER_VACIO, CARACTER_TOCADO, CARACTER_AGUA)
+            self.jugador1: Tablero(self.ANCHO_TABLEROS, self.ALTO_TABLEROS, barcos_j1, self.CARACTER_VACIO, self.CARACTER_TOCADO, self.CARACTER_AGUA),
+            self.jugador2: Tablero(self.ANCHO_TABLEROS, self.ALTO_TABLEROS, barcos_j2, self.CARACTER_VACIO, self.CARACTER_TOCADO, self.CARACTER_AGUA)
         }
 
         # Copia superficial de la lista, NO los objetos
@@ -160,7 +165,8 @@ class Partida:
         tablero_defensor = self.tableros[defensor]
 
         try:
-            resultado = tablero_defensor.recibir_disparo(x, y)
+            resultado_enum = self.disparar(x, y, tablero_defensor)
+            resultado = self.adaptar_resultado_a_string(resultado_enum)
 
             await enviar(writer, {
                 "tipo": "resultado",
@@ -286,3 +292,31 @@ class Partida:
             "rival": rival.ver_tablero_rival()
         })
 
+
+    def adaptar_resultado_a_string(self, resultado: ResultadoDisparo) -> str:
+        """
+        Convierte el enum a str.
+
+        Args:
+            resultado (ResultadoDisparo): Objeto de la clase ResultadoDisparo que representa un resultado.
+
+        Returns:
+            str: Cadena resultado.
+        """
+        return TRADUCCION[resultado]
+    
+    
+    def disparar(self, x: int, y: int, tablero_defensor) -> ResultadoDisparo:
+        """
+        Realiza un disparo sobre los tableros.
+
+        :param x: Coordenada X.
+        :type x: int
+        :param y: Coordenada Y.
+        :type y: int
+        :return: Resultado del disparo.
+        :rtype: ResultadoDisparo
+        """
+        [resultado, caracter] = tablero_defensor.recibir_disparo(x, y)
+
+        return resultado

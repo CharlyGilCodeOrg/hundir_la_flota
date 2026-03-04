@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 class Partida(ABC):
 
     @abstractmethod
-    def disparar(self, jugador, x, y):
+    def disparar(self, x: int, y: int):
         pass
 
     @abstractmethod

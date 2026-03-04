@@ -1,6 +1,6 @@
 from utils.excepciones import SalirDelPrograma
 from vista.consola.vista_pve import InterfazConsola
-from config.constantes import DIFICULTAD
+from config.constantes import CONSTANTES
 
 class Menu:
 
@@ -95,7 +95,7 @@ class Menu:
         print("Dificultad")
         print("")
         
-        for num, dificultad in DIFICULTAD["PVE"].items():
+        for num, dificultad in CONSTANTES["DIFICULTAD"]["PVE"].items():
             print(f"{num}. {dificultad['nombre']}")
         
         print("")
