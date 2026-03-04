@@ -9,7 +9,7 @@ from controlador.controlador import Controlador
 
 class ControladorPVP(Controlador):
 
-    def __init__(self, dificultad: str = "PVP") -> None:
+    def __init__(self, constantes: dict, dificultad: str = "PVP") -> None:
         config = CONSTANTES["DIFICULTAD"][dificultad]
         caracteres = CONSTANTES["CARACTERES"]
 
