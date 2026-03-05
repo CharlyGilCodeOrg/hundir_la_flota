@@ -18,6 +18,9 @@ class Servidor:
         self.port = port
         self.cola_espera = []
         self.partidas_activas = []
+        self._contador_jugadores = 1
+        self._contador_partidas = 1
+        self._ids = {}
         
 
     async def iniciar(self) -> None:
@@ -35,7 +38,7 @@ class Servidor:
             self.port
         )
 
-        print(f"Servidor escuchando en {self.host}:{self.port}")
+        print(f"\nServidor escuchando en {self.host}:{self.port}")
 
         async with server:
             await server.serve_forever()
@@ -60,8 +63,13 @@ class Servidor:
                 datos al cliente.
         """
         addr = writer.get_extra_info("peername")
-        print("===================================")
-        print("Cliente conectado desde", addr)
+        jugador_id = self._contador_jugadores
+        self._contador_jugadores += 1
+        self._ids[writer] = jugador_id
+        
+        print("\n=======================================================")
+        print(f"Jugador {jugador_id} conectado desde {addr}")
+        print("=======================================================")
 
         self.cola_espera.append(writer)
 
@@ -70,19 +78,35 @@ class Servidor:
             "mensaje": "Esperando rival..."
         })
 
+        print("\n========================================================")
         print(f"Jugadores en espera: {len(self.cola_espera)}")
+        print("========================================================")
 
         if len(self.cola_espera) >= 2:
             j1 = self.cola_espera.pop(0)
             j2 = self.cola_espera.pop(0)
+            id1 = self._ids[j1]
+            id2 = self._ids[j2]
+            addr1 = j1.get_extra_info("peername")
+            addr2 = j2.get_extra_info("peername")
+            partida_id = self._contador_partidas
+            self._contador_partidas += 1
 
             sesion = SesionPVP(j1, j2)
             self.partidas_activas.append(sesion)
 
             await sesion.iniciar()
             
-            print(f"Creando Partida entre {j1} y {j2}\n")
+            print("\n----------- PARTIDA INICIADA -----------")
+            print(f"Partida #{partida_id}")
+            print(f"Jugador {id1} {addr1}")
+            print(f"Jugador {id2} {addr2}")
+            print("----------------------------------------\n")
+            print("========================================================")
+            print(f"Partidas activas: {len(self.partidas_activas)}")
+            print("\n========================================================")
             print(f"Jugadores en espera: {len(self.cola_espera)}")
+            print("========================================================")
 
         try:
             while True:
@@ -90,7 +114,9 @@ class Servidor:
                 data = await reader.readline()
 
                 if not data:
-                    print("Cliente desconectado:", addr)
+                    print("\n=======================================================")
+                    print(f"Cliente desconectado: J{jugador_id} {addr}")
+                    print("========================================================")
                     break
 
                 mensaje = json.loads(data.decode().strip())
@@ -98,9 +124,19 @@ class Servidor:
                 if writer in jugador_partida:
                     partida = jugador_partida[writer]
                     await partida.recibir_mensaje(writer, mensaje)
+            
+            writer.close()
+            await writer.wait_closed()
 
         except ConnectionResetError:
-            print("Conexión perdida con", addr)
+            print("\n=======================================================")
+            print(f"Conexión perdida con J{jugador_id} {addr}")
+            print("========================================================")
+        
+        finally:
+            if writer in self._ids:
+                del self._ids[writer]
+
 
 
 if __name__ == "__main__":
