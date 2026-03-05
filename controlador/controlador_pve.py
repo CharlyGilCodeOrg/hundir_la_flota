@@ -1,13 +1,13 @@
 from modelo.tablero import Tablero
 from modelo.partida.partida_pve import PartidaPVE
 from modelo.barco import Barco
-from vista.consola.vista_consola_pve import VistaConsolaPVE
+from vista.consola.vista_consola import VistaConsola
 from utils.excepciones import VolverAlMenu
 from controlador.controlador import Controlador
 
 
 class ControladorPVE(Controlador):
-    def __init__(self, vista: VistaConsolaPVE, config: dict) -> None:
+    def __init__(self, vista: VistaConsola, config: dict) -> None:
         self._vista = vista
         self._config = config
         self._partida: PartidaPVE | None = None

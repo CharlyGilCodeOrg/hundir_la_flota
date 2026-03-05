@@ -1,5 +1,5 @@
-from vista.consola.vista_consola_pve import VistaConsolaPVE
-from vista.consola.menu_consola_pve import Menu
+from vista.consola.vista_consola import VistaConsola
+from vista.consola.menu_consola import Menu
 from utils.utils import Util
 from utils.excepciones import SalirDelPrograma
 from config.mensajes import TEXTOS, INSTRUCCIONES
@@ -16,7 +16,7 @@ class App:
         Inicializa la aplicación.
         """
         validador = Util()
-        self._interfaz = VistaConsolaPVE(TEXTOS, validador)
+        self._interfaz = VistaConsola(TEXTOS, validador)
         self._menu = Menu(self._interfaz, INSTRUCCIONES)
         self.controlador_pve = ControladorPVE(self._interfaz, CONSTANTES)
 

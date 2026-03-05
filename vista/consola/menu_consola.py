@@ -1,5 +1,5 @@
 from utils.excepciones import SalirDelPrograma
-from vista.consola.vista_consola_pve import VistaConsola
+from vista.consola.vista_consola import VistaConsola
 from config.constantes import CONSTANTES
 
 class Menu:
