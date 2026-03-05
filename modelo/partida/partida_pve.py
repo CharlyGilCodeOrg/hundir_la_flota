@@ -18,11 +18,7 @@ class PartidaPVE(Partida):
         self._disparos_maximos = disparos_maximos
         self._disparos_realizados = 0  
         
-        for barco in self.tablero_maquina.barcos:
-            colocado = self.colocar_barco(barco)
-            
-            if not colocado:
-                raise RuntimeError(f"No se pudo colocar el barco {barco.nombre}.")
+        self._colocar_barcos_automaticamente()
 
     
     def disparar(self, x: int, y: int) -> ResultadoDisparo:
@@ -75,16 +71,6 @@ class PartidaPVE(Partida):
         return self.tablero_maquina.colocar_barco_aleatorio(barco)
 
 
-    def quedan_disparos(self) -> bool:
-        """
-        Indica si aún quedan disparos disponibles.
-
-        :return: True si quedan disparos, False en caso contrario.
-        :rtype: bool
-        """
-        return self._disparos_realizados < self._disparos_maximos
-
-
     def hay_victoria(self) -> bool:
         """
         Comprueba si quedan barcos en el tablero interno.
@@ -93,6 +79,16 @@ class PartidaPVE(Partida):
         :rtype: bool
         """
         return self.tablero_maquina.todos_hundidos()
+
+
+    def quedan_disparos(self) -> bool:
+        """
+        Indica si aún quedan disparos disponibles.
+
+        :return: True si quedan disparos, False en caso contrario.
+        :rtype: bool
+        """
+        return self._disparos_realizados < self._disparos_maximos
 
 
     def disparos_restantes(self) -> int:
@@ -114,6 +110,15 @@ class PartidaPVE(Partida):
         """
         return self.tablero_maquina.ancho, self.tablero_maquina.alto
     
-# Falta método obtener_tablero_propio
-# Falta método obtener_tablero_rival
-# Falta método colocar_barco?
+    
+    def _colocar_barcos_automaticamente(self):
+        """
+        Coloca los barcos automáticamente en el tablero.
+
+        Raises:
+            RuntimeError: En caso de que un barco no se pueda colocar.
+        """
+        for barco in self.tablero_maquina.barcos:
+            colocado = self.colocar_barco(barco)            
+            if not colocado:
+                raise RuntimeError(f"No se pudo colocar el barco {barco.nombre}.")

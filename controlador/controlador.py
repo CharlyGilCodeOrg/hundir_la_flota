@@ -1,12 +1,15 @@
 from abc import ABC, abstractmethod
 
+
 class Controlador(ABC):
+    """
+    Interfaz base para todos los controladores del juego.
+    """
 
     @abstractmethod
-    def crear_partida(self):
-        pass
-
-
-    @abstractmethod
-    def ejecutar_partida(self):
+    def iniciar(self, *args, **kwargs):
+        """
+        Inicia el controlador.
+        Cada modo de juego implementa su propia lógica.
+        """
         pass
