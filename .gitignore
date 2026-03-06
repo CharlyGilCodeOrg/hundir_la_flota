@@ -4,4 +4,4 @@ __pycache__/
 *.pyo
 
 # Logs del servidor
-logs
+*.log
