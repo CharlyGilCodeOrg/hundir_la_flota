@@ -174,7 +174,6 @@ class VistaConsola(Vista):
         :param mensaje: Mensaje a mostrar.
         :type mensaje: str
         """
-        print("")
         print(mensaje)
 
 
@@ -201,12 +200,12 @@ class VistaConsola(Vista):
         os.system('cls' if os.name == 'nt' else 'clear')
 
 
-    # def mostrar_turno_jugador(self, jugador: int) -> None:
-    #     """
-    #     Muestra el turno del jugador actual.
+    def mostrar_tableros(self, propio, rival):
+        ancho = 25
+        print()
+        print("Tu tablero".ljust(ancho) + "Tablero rival")
 
-    #     :param jugador: Número del jugador actual.
-    #     :type jugador: int
-    #     """
-    #     print("")
-    #     print(self._textos["TURNO"].format(jugador))
+        for fila1, fila2 in zip(propio, rival):
+            linea1 = " ".join(fila1)
+            linea2 = " ".join(fila2)
+            print(linea1.ljust(ancho) + linea2)

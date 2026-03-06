@@ -1,7 +1,6 @@
 import asyncio
 from controlador.controlador import Controlador
-from config.protocolo import TipoMensaje, obtener_tipo
-
+from config.protocolo import TipoMensaje, obtener_tipo, crear_mensaje
 
 class ControladorPVPCliente(Controlador):
 
@@ -13,6 +12,8 @@ class ControladorPVPCliente(Controlador):
         self._colocando = False
         self._mi_turno = False
         self._tarea_input = None
+        self._barcos_disponibles = []
+        self._input_activo = False
 
         self._handlers = {
             TipoMensaje.ESPERA: self._manejar_espera,
@@ -27,11 +28,12 @@ class ControladorPVPCliente(Controlador):
             TipoMensaje.ERROR: self._manejar_error
         }
 
+
     # =========================
     # Conexión y loop principal
     # =========================
     async def iniciar(self):
-        self._vista.mostrar_mensaje("Conectando al servidor...")
+        self._vista.mostrar_mensaje("\nConectando al servidor...\n")
         await self._cliente.conectar()
         await self._escuchar_servidor()
 
@@ -60,54 +62,123 @@ class ControladorPVPCliente(Controlador):
     # =========================
     async def input_async(self, prompt: str):
         loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(None, input, prompt)
+        try:
+            self._input_activo = True
+            valor = await loop.run_in_executor(None, input, prompt)
+            return valor
 
-    async def leer_entero(self, prompt: str):
+        except KeyboardInterrupt:
+            await self.salir_partida()
+            return "salir"
+
+        finally:
+            self._input_activo = False
+
+
+    async def leer_entero(self, prompt, minimo = None, maximo = None):
         while True:
             valor = await self.input_async(prompt)
+
             if valor.lower() == "salir":
                 await self.salir_partida()
                 return None
+
             try:
-                return int(valor)
+                numero = int(valor)
+
+                if minimo is not None and numero < minimo:
+                    raise ValueError
+
+                if maximo is not None and numero > maximo:
+                    raise ValueError
+
+                return numero
+
             except ValueError:
-                self._vista.mostrar_mensaje("Debes introducir un número válido.")
+                if minimo is not None and maximo is not None:
+                    self._vista.mostrar_mensaje(
+                        f"\nERROR: Introduce un número entre {minimo} y {maximo}"
+                    )
+                else:
+                    self._vista.mostrar_mensaje("\nERROR: Introduce un número válido")
+
 
     # =========================
     # Fase de colocación de barcos
     # =========================
     async def fase_colocacion(self):
         try:
-            while self._colocando and self._jugando:
-                indice = await self.leer_entero("Selecciona número de barco: ")
-                if indice is None:
+            while True:
+                if not self._barcos_disponibles:
+                    self._vista.mostrar_mensaje("No hay barcos disponibles.")
                     return
 
-                x = await self.leer_entero("Coordenada X: ")
+                indices_validos = [b["indice"] for b in self._barcos_disponibles]
+
+                # seleccionar barco
+                while True:
+                    indice = await self.leer_entero(
+                        "\nSelecciona número de barco: "
+                    )
+
+                    if indice is None:
+                        return
+
+                    if indice in indices_validos:
+                        break
+
+                    self._vista.mostrar_mensaje(
+                        f"\nERROR: Índice inválido. Opciones: {indices_validos}"
+                    )
+                
+                barco = next(b for b in self._barcos_disponibles if b["indice"] == indice)
+                tamanyo = barco["tamanyo"]
+
+                # coordenadas
+                x = await self.leer_entero("\nCoordenada X para colocación del barco (0-9): ", 0, 9)
                 if x is None:
                     return
 
-                y = await self.leer_entero("Coordenada Y: ")
+                y = await self.leer_entero("\nCoordenada Y para colocación del barco (0-9): ", 0, 9)
                 if y is None:
                     return
 
+                # orientación
                 while True:
-                    orientacion = await self.input_async("Horizontal o Vertical (h/v): ")
+                    orientacion = await self.input_async(
+                        "\nHorizontal o Vertical (h/v): "
+                    )
+
                     if orientacion.lower() == "salir":
                         await self.salir_partida()
                         return
+
                     if orientacion.lower() in ("h", "v"):
                         horizontal = orientacion.lower() == "h"
                         break
-                    self._vista.mostrar_mensaje("Debes introducir 'h' o 'v'.")
 
-                await self._cliente.enviar({
-                    "tipo": "seleccionar_barco",
-                    "indice": indice,
-                    "x": x,
-                    "y": y,
-                    "horizontal": horizontal
-                })
+                    self._vista.mostrar_mensaje(
+                        "\nERROR: Debes introducir 'h' o 'v'"
+                    )
+                
+                if not self.validar_barco_en_tablero(x, y, tamanyo, horizontal):
+                    self._vista.mostrar_mensaje(
+                        "\nERROR: El barco se sale del tablero. Prueba otra posición."
+                    )
+                    continue
+
+                # enviar al servidor
+                await self._cliente.enviar(
+                    crear_mensaje(
+                        TipoMensaje.SELECCIONAR_BARCO,
+                        indice=indice,
+                        x=x,
+                        y=y,
+                        horizontal=horizontal
+                    )
+                )
+                break
+    
         except asyncio.CancelledError:
             return
 
@@ -115,24 +186,29 @@ class ControladorPVPCliente(Controlador):
     # Fase de turnos
     # =========================
     async def fase_turno(self):
+        self._vista.mostrar_mensaje("\nEscribe 'salir' para abandonar.")
         try:
-            print("ENTRANDO EN FASE TURNO.")
-            if not self._mi_turno or not self._jugando:
-                return
+            x = await self.leer_entero(
+                "\nCoordenada X del disparo (0-9): ", 0, 9
+            )
 
-            x = await self.leer_entero("Coordenada X del disparo: ")
             if x is None:
                 return
 
-            y = await self.leer_entero("Coordenada Y del disparo: ")
+            y = await self.leer_entero(
+                "\nCoordenada Y del disparo (0-9): ", 0, 9
+            )
             if y is None:
                 return
 
-            await self._cliente.enviar({
-                "tipo": "disparo",
-                "x": x,
-                "y": y
-            })
+            await self._cliente.enviar(
+                crear_mensaje(
+                    TipoMensaje.DISPARO,
+                    x=x,
+                    y=y
+                )
+            )
+            
         except asyncio.CancelledError:
             return
 
@@ -140,20 +216,25 @@ class ControladorPVPCliente(Controlador):
     # Manejo de mensajes
     # =========================
     async def _manejar_inicio(self, mensaje):
-        self._vista.mostrar_mensaje(f"Eres el jugador {mensaje['jugador']}")
+        self._vista.mostrar_mensaje(f"\nEres el jugador {mensaje['jugador']}\n")
         self._colocando = True
-        self._vista.mostrar_mensaje("Fase de colocación de barcos iniciada. Escribe 'salir' para abandonar.")
-        if not self._tarea_input or self._tarea_input.done():
-            self._tarea_input = asyncio.create_task(self.fase_colocacion())
+        self._vista.mostrar_mensaje("Fase de colocación de barcos iniciada.")
+        # if not self._tarea_input or self._tarea_input.done():
+        #     self._tarea_input = asyncio.create_task(self.fase_colocacion())
 
     async def _manejar_lista_barcos(self, mensaje):
         barcos = mensaje["barcos"]
-        self._vista.mostrar_mensaje("Barcos disponibles:")
+        self._barcos_disponibles = barcos
+        self._vista.mostrar_mensaje("\nEscribe 'salir' para abandonar.")
+        self._vista.mostrar_mensaje("\nBarcos disponibles:\n")
         for b in barcos:
             self._vista.mostrar_mensaje(f"{b['indice']} - {b['nombre']} ({b['tamanyo']})")
+            
+        if self._colocando and (not self._tarea_input or self._tarea_input.done()):
+            self._tarea_input = asyncio.create_task(self.fase_colocacion())
 
     async def _manejar_confirmacion(self, mensaje):
-        self._vista.mostrar_mensaje(f"Confirmación: {mensaje['mensaje']}")
+        self._vista.mostrar_mensaje(f"\nConfirmación: {mensaje['mensaje']}")
 
     async def _manejar_espera(self, mensaje):
         self._vista.mostrar_mensaje(mensaje["mensaje"])
@@ -166,7 +247,6 @@ class ControladorPVPCliente(Controlador):
             
 
     async def _manejar_turno(self, mensaje):
-
         # TERMINAR COLOCACIÓN
         if self._colocando:
             self._colocando = False
@@ -178,23 +258,28 @@ class ControladorPVPCliente(Controlador):
         self._mi_turno = mensaje["tu_turno"]
 
         if self._mi_turno:
-            self._vista.mostrar_mensaje("Es tu turno.")
+            self._vista.mostrar_mensaje("\nEs tu turno.")
 
             self._tarea_input = asyncio.create_task(self.fase_turno())
 
         else:
-            self._vista.mostrar_mensaje("Turno del rival.")
+            self._vista.mostrar_mensaje("\nTurno del rival.")
 
 
     async def _manejar_resultado(self, mensaje):
-        self._vista.mostrar_mensaje(f"Disparo en ({mensaje['x']},{mensaje['y']}): {mensaje['resultado']}")
+        self._vista.mostrar_mensaje(f"\nDisparo en ({mensaje['x']},{mensaje['y']}): {mensaje['resultado']}\n")
 
     async def _manejar_recibido(self, mensaje):
-        self._vista.mostrar_mensaje(f"Te dispararon en ({mensaje['x']},{mensaje['y']}): {mensaje['resultado']}")
+        self._vista.mostrar_mensaje(f"\nTe dispararon en ({mensaje['x']},{mensaje['y']}): {mensaje['resultado']}\n")
 
     async def _manejar_estado_tableros(self, mensaje):
-        self._vista.mostrar_tablero(mensaje["propio"])
-        self._vista.mostrar_tablero(mensaje["rival"])
+        if self._input_activo:
+            return
+        
+        self._vista.mostrar_tableros(
+            mensaje["propio"],
+            mensaje["rival"]
+        )
 
     async def _manejar_fin(self, mensaje):
         victoria = mensaje["victoria"]
@@ -205,7 +290,19 @@ class ControladorPVPCliente(Controlador):
         await self._cliente.desconectar()
 
     async def _manejar_error(self, mensaje):
-        self._vista.mostrar_mensaje(f"Error: {mensaje['mensaje']}")
+        self._vista.mostrar_mensaje(f"\nError: {mensaje['mensaje']}")
+        
+        if self._colocando:
+            if not self._tarea_input or self._tarea_input.done():
+                self._tarea_input = asyncio.create_task(self.fase_colocacion())
+                
+
+    def validar_barco_en_tablero(self, x, y, tamanyo, horizontal):
+        if horizontal:
+            return x + tamanyo <= 10
+        else:
+            return y + tamanyo <= 10
+
 
     # =========================
     # Salir

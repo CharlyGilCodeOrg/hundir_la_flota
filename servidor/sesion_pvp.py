@@ -1,17 +1,17 @@
-from servidor.globales import enviar, jugador_partida
+from servidor.globales import enviar, jugador_partida, logger
 from controlador.controlador_pvp import ControladorPVP
 from modelo.partida.partida_pvp import EstadoPartida
 from modelo.resultado import ResultadoDisparo
 from config.mensajes import TRADUCCION
 from config.protocolo import TipoMensaje, crear_mensaje, obtener_tipo
 from config.constantes import CONSTANTES
-from servidor.log import logger
+from config.log_decorator import log_async
 import asyncio
 
 
 class SesionPVP:
 
-    def __init__(self, writer1: asyncio.StreamWriter, writer2: asyncio.StreamWriter, partida_id: int):
+    def __init__(self, writer1: asyncio.StreamWriter, writer2: asyncio.StreamWriter, id1, id2, addr1, addr2, partida_id: int):
         """
         Inicializa una sesión de juego PVP entre dos clientes conectados.
         
@@ -23,16 +23,34 @@ class SesionPVP:
             writer1 (asyncio.StreamWriter): Writer del primer jugador.
             writer2 (asyncio.StreamWriter): Writer del segundo jugador.
         """
-        self._writers = {1: writer1, 2: writer2}
-        self._jugadores = {writer1: 1, writer2: 2}
         self.partida_id = partida_id
-
+        self._writers = {
+            1: writer1,
+            2: writer2
+        }
+        self._jugadores = {
+            writer1: 1,
+            writer2: 2
+        }
+        self._player_ids = {
+            1: id1,
+            2: id2
+        }
+        self._addrs = {
+            1: addr1,
+            2: addr2
+        }
         self._controlador = ControladorPVP(CONSTANTES)
 
         jugador_partida[writer1] = self
         jugador_partida[writer2] = self
-        
-        logger.info(f"[PARTIDA {self.partida_id}] Sesión creada entre J1 y J2")
+
+        logger.info(
+            f"MATCH_SESSION_CREATED "
+            f"match={self.partida_id} "
+            f"player1={id1}@{addr1} "
+            f"player2={id2}@{addr2}"
+        )
 
 
     async def iniciar(self) -> None:
@@ -42,6 +60,7 @@ class SesionPVP:
         Envía mensajes de inicio a ambos jugadores indicando su número y el estado actual,
         seguido de la lista de barcos pendientes para colocar.
         """
+        logger.info(f"MATCH_START match={self.partida_id}")
         for jugador, writer in self._writers.items():
             await enviar(writer, crear_mensaje(
                 TipoMensaje.INICIO,
@@ -49,9 +68,9 @@ class SesionPVP:
                 estado=self._controlador.estado().value
             ))
             await self._enviar_barcos(jugador)
-        logger.info(f"[PARTIDA {self.partida_id}] Mensajes de inicio enviados a ambos jugadores")
 
 
+    @log_async
     async def recibir_mensaje(self, writer: asyncio.StreamWriter, mensaje: dict) -> None:
         """
         Procesa un mensaje recibido de un jugador durante la partida.
@@ -87,8 +106,18 @@ class SesionPVP:
         """
         if obtener_tipo(mensaje) != TipoMensaje.SELECCIONAR_BARCO:
             return
+        
+        player_id = self._player_ids[jugador]
+        addr = self._addrs[jugador]
 
         writer = self._writers[jugador]
+        
+        if not (0 <= mensaje["x"] <= 9 and 0 <= mensaje["y"] <= 9):
+            await enviar(writer, crear_mensaje(
+                TipoMensaje.ERROR,
+                mensaje="Coordenadas fuera del tablero"
+            ))
+            return
 
         try:
             colocado = self._controlador.colocar_barco(
@@ -100,10 +129,16 @@ class SesionPVP:
             )
 
             if colocado:
-                logger.info(f"[PARTIDA {self.partida_id}] J{jugador} colocó barco índice {mensaje['indice']} en ({mensaje['x']},{mensaje['y']}) {'H' if mensaje['horizontal'] else 'V'}")
+                logger.info(
+                    f"SHIP_PLACED match={self.partida_id} "
+                    f"player={player_id} addr={addr} ship={mensaje['indice']} "
+                    f"x={mensaje['x']} y={mensaje['y']}"
+                )
                 await enviar(writer, crear_mensaje(TipoMensaje.CONFIRMACION, mensaje="Barco colocado correctamente"))
             else:
-                logger.warning(f"[PARTIDA {self.partida_id}] J{jugador} intento colocar barco inválido en ({mensaje['x']},{mensaje['y']})")
+                logger.warning(
+                    f"SHIP_INVALID match={self.partida_id} player={player_id} addr={addr}"
+                )
                 await enviar(writer, crear_mensaje(TipoMensaje.ERROR, mensaje="Posición inválida"))
                 return
 
@@ -119,7 +154,6 @@ class SesionPVP:
                 await self._iniciar_turnos()
 
         except Exception as e:
-            logger.error(f"[PARTIDA {self.partida_id}] Error en colocación de J{jugador}: {e}")
             await enviar(writer, crear_mensaje(TipoMensaje.ERROR, mensaje=str(e)))
             
 
@@ -136,8 +170,18 @@ class SesionPVP:
         """
         if obtener_tipo(mensaje) != TipoMensaje.DISPARO:
             return
+        
+        player_id = self._player_ids[jugador]
+        addr = self._addrs[jugador]
 
         writer = self._writers[jugador]
+        
+        if not (0 <= mensaje["x"] <= 9 and 0 <= mensaje["y"] <= 9):
+            await enviar(writer, crear_mensaje(
+                TipoMensaje.ERROR,
+                mensaje="Coordenadas fuera del tablero"
+            ))
+            return
 
         try:
             resultado = self._controlador.disparar(
@@ -147,6 +191,13 @@ class SesionPVP:
             )
 
             resultado_str = TRADUCCION[resultado]
+            
+            logger.info(
+                f"SHOT match={self.partida_id} "
+                f"player={player_id} addr={addr} "
+                f"x={mensaje['x']} y={mensaje['y']} "
+                f"result={resultado_str}"
+            )
 
             rival = 2 if jugador == 1 else 1
             writer_rival = self._writers[rival]
@@ -168,22 +219,34 @@ class SesionPVP:
                     x=mensaje["x"],
                     y=mensaje["y"]
             ))
-            
-            logger.info(f"[PARTIDA {self.partida_id}] J{jugador} dispara a ({mensaje['x']},{mensaje['y']}) → {resultado_str}")
 
             await self._enviar_estado(jugador)
             await self._enviar_estado(rival)
             
             if resultado == ResultadoDisparo.INVALIDO:
+                await enviar(
+                    writer,
+                    crear_mensaje(
+                        TipoMensaje.ERROR,
+                        mensaje="Coordenadas fuera del tablero (0-9)"
+                    )
+                )
+
+                await self._actualizar_turnos()
                 return
 
             if self._controlador.hay_victoria():
+                ganador = self._controlador.jugador_ganador()
+                player_id = self._player_ids[ganador]
+                addr = self._addrs[ganador]
                 await self._finalizar_partida()
+                logger.info(
+                    f"MATCH_END match={self.partida_id} winner={player_id} addr={addr}"
+                )
             else:
                 await self._actualizar_turnos()
 
         except Exception as e:
-            logger.error(f"[PARTIDA {self.partida_id}] Error en disparo de J{jugador}: {e}")
             await enviar(
                 writer, 
                 crear_mensaje(
@@ -197,8 +260,6 @@ class SesionPVP:
         """
         Inicia la gestión de turnos al comenzar la fase de juego.
         """
-        turno = self._controlador.turno_actual()
-        logger.info(f"[PARTIDA {self.partida_id}] Turnos iniciados. Turno de J{turno}")
         await self._actualizar_turnos()
 
 
@@ -216,7 +277,6 @@ class SesionPVP:
                     tu_turno=jugador == turno
                 )
             )
-        logger.info(f"[PARTIDA {self.partida_id}] Turno actualizado: J{turno} juega ahora")
 
 
     async def _finalizar_partida(self) -> None:
@@ -232,7 +292,6 @@ class SesionPVP:
                     victoria = jugador == ganador
                 )
             )
-        logger.info(f"[PARTIDA {self.partida_id}] Partida finalizada. Ganador: J{ganador}")
 
 
     async def _enviar_estado(self, jugador: int) -> None:
@@ -263,7 +322,6 @@ class SesionPVP:
             jugador (int): Número del jugador que recibirá la lista (1 o 2).
         """
         writer = self._writers[jugador]
-
         lista = self._controlador.obtener_barcos_pendientes(jugador)
 
         await enviar(writer, 
@@ -282,25 +340,37 @@ class SesionPVP:
             jugador = self._jugadores.get(writer)
             if not jugador:
                 return
+            
+            player_id = self._player_ids[jugador]
+            addr = self._addrs[jugador]
 
             rival = 2 if jugador == 1 else 1
             writer_rival = self._writers.get(rival)
-            
-            logger.warning(f"[PARTIDA {self.partida_id}] J{jugador} se desconectó")
+            logger.info(
+                f"PLAYER_LEFT match={self.partida_id} player={player_id} addr={addr}"
+            )
 
+            # avisar al rival
             if writer_rival:
-                await enviar(writer_rival, 
+                await enviar(writer_rival,
                     crear_mensaje(
                         TipoMensaje.FIN,
                         victoria=True,
-                        mensaje="Tu rival se ha desconectado. Has ganado la partida."
+                        mensaje="Tu rival se ha desconectado. Has ganado."
                     )
                 )
 
-            # Limpiar referencias internas
-            if writer in self._writers.values():
-                del self._writers[jugador]
-            if writer in self._jugadores:
-                del self._jugadores[writer]
-            if writer in jugador_partida:
-                del jugador_partida[writer]
+            # cerrar ambos sockets
+            for w in list(self._writers.values()):
+                try:
+                    w.close()
+                    await w.wait_closed()
+                except:
+                    pass
+
+                if w in jugador_partida:
+                    del jugador_partida[w]
+
+            self._writers.clear()
+            self._jugadores.clear()
+            logger.info(f"MATCH_TERMINATED match={self.partida_id}")

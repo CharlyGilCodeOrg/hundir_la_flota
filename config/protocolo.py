@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class TipoMensaje(str, Enum):
     ESPERA = "espera"
     INICIO = "inicio"
@@ -14,6 +13,7 @@ class TipoMensaje(str, Enum):
     CONFIRMACION = "confirmacion"
     ERROR = "error"
     FIN = "fin"
+    SALIR = "salir"
 
 
 def crear_mensaje(tipo: TipoMensaje, **datos) -> dict:
